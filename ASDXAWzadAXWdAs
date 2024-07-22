@@ -342,8 +342,8 @@ local AimTab = Revival:CreateTab({Name = "Aiming"})
 local AimingSection = AimTab:CreateSection({Name = "Target Aimlock", Side = "Left"})
 AimingSection:AddKeybind(
     {
-        Name = "Select Target Key",
-        Keybind = "Q",
+        Name = "Keybind",
+        Keybind = "C",
         Pressed = function()
             if Alluka.Target then
                 Alluka.Target = nil
@@ -361,7 +361,7 @@ AimingSection:AddKeybind(
 )
 AimingSection:AddToggle(
     {
-        Name = "Aimlock",
+        Name = "Aimlock - outdated",
         Value = Alluka.Aimlock.Enabled,
         Keybind = Alluka.Aimlock.Key,
         Callback = function(v)
@@ -709,7 +709,7 @@ CameraSection:AddToggle(
 local SilentSection = AimTab:CreateSection({Name = "Silent Aim", Side = "Left"})
 SilentSection:AddToggle(
     {
-        Name = "Silent Aim",
+        Name = "Silent Aim - outdated",
         Keybind = Alluka.SilentAim.Key,
         Value = Alluka.SilentAim.Enabled,
         Callback = function(v)
