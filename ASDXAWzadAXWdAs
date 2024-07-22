@@ -1,3 +1,16 @@
+if game.Players.LocalPlayer.UserId == 
+    1809198971 or
+    4454302424 or
+    1776770887 
+    then
+    print("User is Whitelisted.")
+    print("DO NOT USE ON REAL DA HOOD YET!")
+    
+else
+    Player:kick("User is not whitelisted.")
+    return
+end
+
 repeat
     wait()
 until game:IsLoaded()
