@@ -1,16 +1,18 @@
-if game.Players.LocalPlayer.UserId == 
-    1809198971 or
-    4454302424 or
-    1776770887 
-    then
-    print("User is Whitelisted.")
-    print("DO NOT USE ON REAL DA HOOD YET!")
-    
-else
-    Player:kick("User is not whitelisted.")
-    return
-end
+--[[
+██████╗░███████╗██╗░░░██╗██╗██╗░░░██╗░█████╗░██╗░░░░░██╗░██████╗  ██████╗░███████╗██╗░░░██╗
+██╔══██╗██╔════╝██║░░░██║██║██║░░░██║██╔══██╗██║░░░░░╚█║██╔════╝  ██╔══██╗██╔════╝██║░░░██║
+██████╔╝█████╗░░╚██╗░██╔╝██║╚██╗░██╔╝███████║██║░░░░░░╚╝╚█████╗░  ██║░░██║█████╗░░╚██╗░██╔╝
+██╔══██╗██╔══╝░░░╚████╔╝░██║░╚████╔╝░██╔══██║██║░░░░░░░░░╚═══██╗  ██║░░██║██╔══╝░░░╚████╔╝░
+██║░░██║███████╗░░╚██╔╝░░██║░░╚██╔╝░░██║░░██║███████╗░░░██████╔╝  ██████╔╝███████╗░░╚██╔╝░░
+╚═╝░░╚═╝╚══════╝░░░╚═╝░░░╚═╝░░░╚═╝░░░╚═╝░░╚═╝╚══════╝░░░╚═════╝░  ╚═════╝░╚══════╝░░░╚═╝░░░
 
+████████╗███████╗░█████╗░███╗░░░███╗
+╚══██╔══╝██╔════╝██╔══██╗████╗░████║
+░░░██║░░░█████╗░░███████║██╔████╔██║
+░░░██║░░░██╔══╝░░██╔══██║██║╚██╔╝██║
+░░░██║░░░███████╗██║░░██║██║░╚═╝░██║
+░░░╚═╝░░░╚══════╝╚═╝░░╚═╝╚═╝░░░░░╚═╝
+]]
 repeat
     wait()
 until game:IsLoaded()
@@ -22,7 +24,7 @@ local TweenService = game:GetService("TweenService")
 local InputService = game:GetService("UserInputService")
 local TeleportService = game:GetService("TeleportService")
 local MarketplaceService = game:GetService("MarketplaceService")
-local Alluka = {
+local Revival = {
     Target = nil,
     LookAt = {Enabled = false},
     Headless = {Enabled = false},
@@ -77,10 +79,10 @@ local Revival = Library:CreateWindow(
 
 local SilentFOV = Drawing.new("Circle")
 SilentFOV.Visible = false
-SilentFOV.Radius = Alluka.SilentAim.Size
-SilentFOV.Color = Alluka.SilentAim.Color
-SilentFOV.Filled = Alluka.SilentAim.Filled
-SilentFOV.Transparency = Alluka.SilentAim.Transparency
+SilentFOV.Radius = Revival.SilentAim.Size
+SilentFOV.Color = Revival.SilentAim.Color
+SilentFOV.Filled = Revival.SilentAim.Filled
+SilentFOV.Transparency = Revival.SilentAim.Transparency
 
 local function FindPlayer(name)
     for _, v in pairs(Players:GetPlayers()) do 
@@ -93,10 +95,10 @@ local function FindPlayer(name)
 end
 
 local function CheckTarget(player)
-    if Alluka.Aimlock.KnockedCheck or Alluka.Camlock.KnockedCheck or Alluka.SilentAim.KnockedCheck then
+    if Revival.Aimlock.KnockedCheck or Revival.Camlock.KnockedCheck or Revival.SilentAim.KnockedCheck then
         if player.Character.BodyEffects:FindFirstChild("K.O").Value then return true end
     end
-    if Alluka.Aimlock.GrabbedCheck or Alluka.Camlock.GrabbedCheck or Alluka.SilentAim.GrabbedCheck then
+    if Revival.Aimlock.GrabbedCheck or Revival.Camlock.GrabbedCheck or Revival.SilentAim.GrabbedCheck then
         if player.Character:FindFirstChild("GRABBING_CONSTRAINT") then return true end
     end
     return false
@@ -151,7 +153,7 @@ local function GetSilentPlayer(radius)
 end
 
 local function Notify(title, text, time)
-    if Alluka.Notification.Enabled then
+    if Revival.Notification.Enabled then
         NotifyLibrary.Notify({
             Title = title;
             Description = text;
@@ -163,8 +165,8 @@ local function Notify(title, text, time)
 end
 
 local function Fly()
-    Alluka.Fly.Enabled = not Alluka.Fly.Enabled
-    Notify("Revival | Fly", "Flying : " .. tostring(Alluka.Fly.Enabled), 3)
+    Revival.Fly.Enabled = not Revival.Fly.Enabled
+    Notify("Revival | Fly", "Flying : " .. tostring(Revival.Fly.Enabled), 3)
     local BodyPosition = Instance.new("BodyPosition", game.Players.LocalPlayer.Character:FindFirstChild("Head"))
     local BodyGyro = Instance.new("BodyGyro", game.Players.LocalPlayer.Character:FindFirstChild("Head"))
     BodyPosition.maxForce = Vector3.new(math.huge, math.huge, math.huge)
@@ -176,24 +178,24 @@ local function Fly()
         game.Players.LocalPlayer.Character.Humanoid.PlatformStand = true
         local New = BodyGyro.CFrame - BodyGyro.CFrame.p + BodyPosition.position
         if InputService:IsKeyDown("W") then
-            New = New + workspace.CurrentCamera.CoordinateFrame.lookVector * Alluka.Fly.Speed
-            BodyGyro.CFrame = workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad(Alluka.Fly.Speed * 0), 0, 0)
+            New = New + workspace.CurrentCamera.CoordinateFrame.lookVector * Revival.Fly.Speed
+            BodyGyro.CFrame = workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad(Revival.Fly.Speed * 0), 0, 0)
         end
         if InputService:IsKeyDown("S") then
-            New = New - workspace.CurrentCamera.CoordinateFrame.lookVector * Alluka.Fly.Speed
-            BodyGyro.CFrame = workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(math.rad(Alluka.Fly.Speed * 0), 0, 0)
+            New = New - workspace.CurrentCamera.CoordinateFrame.lookVector * Revival.Fly.Speed
+            BodyGyro.CFrame = workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(math.rad(Revival.Fly.Speed * 0), 0, 0)
         end
         if InputService:IsKeyDown("D") then
-            New = New * CFrame.new(Alluka.Fly.Speed, 0, 0)
+            New = New * CFrame.new(Revival.Fly.Speed, 0, 0)
             BodyGyro.CFrame = workspace.CurrentCamera.CoordinateFrame
         end
         if InputService:IsKeyDown("A") then
-            New = New * CFrame.new(-Alluka.Fly.Speed, 0, 0)
+            New = New * CFrame.new(-Revival.Fly.Speed, 0, 0)
             BodyGyro.CFrame = workspace.CurrentCamera.CoordinateFrame
         end
         BodyPosition.Position = New.p
-    until not Alluka.Fly.Enabled
-    Alluka.Fly.Enabled = false
+    until not Revival.Fly.Enabled
+    Revival.Fly.Enabled = false
     BodyGyro:Destroy()
     BodyPosition:Destroy()
     game.Players.LocalPlayer.Character.Humanoid.PlatformStand = false
@@ -202,39 +204,39 @@ end
 
 RunService.Heartbeat:Connect(function()
 
-    if Alluka.SilentAim.Enabled and SilentFOV.Visible then
+    if Revival.SilentAim.Enabled and SilentFOV.Visible then
         SilentFOV.Position = InputService:GetMouseLocation()
-        SilentFOV.Radius = Alluka.SilentAim.Size
-        SilentFOV.Transparency = Alluka.SilentAim.Transparency
-        SilentFOV.Color = Alluka.SilentAim.Color
-        SilentFOV.Filled = Alluka.SilentAim.Filled
-        Alluka.SilentAim.Target = GetSilentPlayer(SilentFOV.Radius)
+        SilentFOV.Radius = Revival.SilentAim.Size
+        SilentFOV.Transparency = Revival.SilentAim.Transparency
+        SilentFOV.Color = Revival.SilentAim.Color
+        SilentFOV.Filled = Revival.SilentAim.Filled
+        Revival.SilentAim.Target = GetSilentPlayer(SilentFOV.Radius)
     end
 
-    if Alluka.Camlock.Enabled and Alluka.Target then
-        local targetPart = Alluka.Camlock.Part
-        if Alluka.Camlock.AirShot and Alluka.Target.Character:FindFirstChild("Humanoid") and Alluka.Target.Character.Humanoid:GetState() == Enum.HumanoidStateType.Freefall then
-            targetPart = Alluka.Camlock.AirPart
+    if Revival.Camlock.Enabled and Revival.Target then
+        local targetPart = Revival.Camlock.Part
+        if Revival.Camlock.AirShot and Revival.Target.Character:FindFirstChild("Humanoid") and Revival.Target.Character.Humanoid:GetState() == Enum.HumanoidStateType.Freefall then
+            targetPart = Revival.Camlock.AirPart
         end
 
-        local targetPosition = Alluka.Target.Character[targetPart].Position
+        local targetPosition = Revival.Target.Character[targetPart].Position
 
-        if Alluka.Camlock.Resolver then
-            targetPosition = Alluka.Target.Character[targetPart].Position
-        elseif Alluka.Camlock.Prediction then
-            local velocity = Alluka.Target.Character[targetPart].Velocity
+        if Revival.Camlock.Resolver then
+            targetPosition = Revival.Target.Character[targetPart].Position
+        elseif Revival.Camlock.Prediction then
+            local velocity = Revival.Target.Character[targetPart].Velocity
             if velocity then
-                targetPosition = Alluka.Target.Character[targetPart].Position + (velocity * Alluka.Camlock.Pred)
+                targetPosition = Revival.Target.Character[targetPart].Position + (velocity * Revival.Camlock.Pred)
             end
         end
 
-        if Alluka.Camlock.Smoothness then
+        if Revival.Camlock.Smoothness then
             TweenService:Create(
                 workspace.CurrentCamera,
                 TweenInfo.new(
-                    Alluka.Camlock.SmoothnessAmount,
-                    Enum.EasingStyle[Alluka.Camlock.EasingStyle],
-                    Enum.EasingDirection[Alluka.Camlock.EasingDirection]
+                    Revival.Camlock.SmoothnessAmount,
+                    Enum.EasingStyle[Revival.Camlock.EasingStyle],
+                    Enum.EasingDirection[Revival.Camlock.EasingDirection]
                 ),
                 {CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, targetPosition)}
             ):Play()
@@ -243,18 +245,18 @@ RunService.Heartbeat:Connect(function()
         end
     end
 
-    if Alluka.Strafe.Enabled then
-        if Alluka.Target and Alluka.Target.Character and Alluka.Target.Character:FindFirstChild("HumanoidRootPart") then
-            Alluka.Strafe.Angle = Alluka.Strafe.Angle + Alluka.Strafe.Speed
+    if Revival.Strafe.Enabled then
+        if Revival.Target and Revival.Target.Character and Revival.Target.Character:FindFirstChild("HumanoidRootPart") then
+            Revival.Strafe.Angle = Revival.Strafe.Angle + Revival.Strafe.Speed
 
-            if Alluka.Strafe.View then
-                game.Workspace.CurrentCamera.CameraSubject = Alluka.Target.Character.Humanoid
+            if Revival.Strafe.View then
+                game.Workspace.CurrentCamera.CameraSubject = Revival.Target.Character.Humanoid
             else
                 game.Workspace.CurrentCamera.CameraSubject = LocalPlayer.Character.Humanoid
             end
 
-            if Alluka.Strafe.Type == "Orbit" then
-                LocalPlayer.Character.HumanoidRootPart.CFrame = Alluka.Target.Character.HumanoidRootPart.CFrame * CFrame.Angles(0, Alluka.Strafe.Angle, 0) * CFrame.new(0, 0, Alluka.Strafe.Distance)
+            if Revival.Strafe.Type == "Orbit" then
+                LocalPlayer.Character.HumanoidRootPart.CFrame = Revival.Target.Character.HumanoidRootPart.CFrame * CFrame.Angles(0, Revival.Strafe.Angle, 0) * CFrame.new(0, 0, Revival.Strafe.Distance)
             end
         else
             game.Workspace.CurrentCamera.CameraSubject = LocalPlayer.Character.Humanoid
@@ -263,8 +265,8 @@ RunService.Heartbeat:Connect(function()
         game.Workspace.CurrentCamera.CameraSubject = LocalPlayer.Character.Humanoid
     end
 
-    if Alluka.AutoArmor.Enabled and Alluka.AutoArmor.TP and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        if LocalPlayer.Character.BodyEffects.Armor.Value <= Alluka.AutoArmor.BuyHP and workspace.Ignored.Shop:FindFirstChild(Alluka.AutoArmor.ArmorToBuy) and not LocalPlayer.Character.BodyEffects["K.O"].Value and not LocalPlayer.Character.BodyEffects["Grabbed"].Value then
+    if Revival.AutoArmor.Enabled and Revival.AutoArmor.TP and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        if LocalPlayer.Character.BodyEffects.Armor.Value <= Revival.AutoArmor.BuyHP and workspace.Ignored.Shop:FindFirstChild(Revival.AutoArmor.ArmorToBuy) and not LocalPlayer.Character.BodyEffects["K.O"].Value and not LocalPlayer.Character.BodyEffects["Grabbed"].Value then
             if not OldPos then
                 OldPos = LocalPlayer.Character.HumanoidRootPart.CFrame
             end
@@ -274,10 +276,10 @@ RunService.Heartbeat:Connect(function()
                 equippedTool.Parent = LocalPlayer.Backpack
             end
 
-            local shopItem = workspace.Ignored.Shop:FindFirstChild(Alluka.AutoArmor.ArmorToBuy)
+            local shopItem = workspace.Ignored.Shop:FindFirstChild(Revival.AutoArmor.ArmorToBuy)
             if shopItem and shopItem:FindFirstChild("ClickDetector") then
                 LocalPlayer.Character.HumanoidRootPart.CFrame = shopItem.Head.CFrame
-                wait(Alluka.AutoArmor.Delay)
+                wait(Revival.AutoArmor.Delay)
                 fireclickdetector(shopItem.ClickDetector)
             end
 
@@ -288,14 +290,14 @@ RunService.Heartbeat:Connect(function()
         end
     end
 
-    if Alluka.AntiAim.Enabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+    if Revival.AntiAim.Enabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
         local OldVelocity = LocalPlayer.Character.HumanoidRootPart.Velocity
-        if Alluka.AntiAim.Type == "Sky" then
+        if Revival.AntiAim.Type == "Sky" then
             LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0, 9999, 0)
-        elseif Alluka.AntiAim.Type == "Underground" then
+        elseif Revival.AntiAim.Type == "Underground" then
             LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0, -9999, 0)
-        elseif Alluka.AntiAim.Type == "Custom Vel"  then
-            LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(Alluka.AntiAim.XValue, Alluka.AntiAim.YValue, Alluka.AntiAim.ZValue)
+        elseif Revival.AntiAim.Type == "Custom Vel"  then
+            LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(Revival.AntiAim.XValue, Revival.AntiAim.YValue, Revival.AntiAim.ZValue)
         end
         RunService.RenderStepped:Wait()
         LocalPlayer.Character.HumanoidRootPart.Velocity = OldVelocity
@@ -310,27 +312,27 @@ local Old; Old = hookmetamethod(game, "__namecall", function(self, ...)
 
     if method == "FireServer" then
         if args[1] == "UpdateMousePos" or args[1] == "MousePos" or args[1] == "Mouse" or args[1] == "MOUSE" then
-            if Alluka.Aimlock.Enabled and Alluka.Target then
-                if Alluka.Aimlock.Resolver then
-                    args[2] = Alluka.Target.Character[Alluka.Aimlock.Part].Position
+            if Revival.Aimlock.Enabled and Revival.Target then
+                if Revival.Aimlock.Resolver then
+                    args[2] = Revival.Target.Character[Revival.Aimlock.Part].Position
                     return Old(self, unpack(args))
-                elseif Alluka.Aimlock.Prediction then
-                    args[2] = Alluka.Target.Character[Alluka.Aimlock.Part].Position + (Alluka.Target.Character[Alluka.Aimlock.Part].Velocity * Alluka.Aimlock.Pred)
+                elseif Revival.Aimlock.Prediction then
+                    args[2] = Revival.Target.Character[Revival.Aimlock.Part].Position + (Revival.Target.Character[Revival.Aimlock.Part].Velocity * Revival.Aimlock.Pred)
                     return Old(self, unpack(args))
-                elseif Alluka.Aimlock.AirShot and Alluka.Target.Character:FindFirstChild("Humanoid") and Alluka.Target.Character.Humanoid.FloorMaterial == Enum.Material.Air then
-                    args[2] = Alluka.Target.Character[Alluka.Aimlock.AirPart].Position + (Alluka.Target.Character[Alluka.Aimlock.AirPart].Velocity * Alluka.Aimlock.Pred)
+                elseif Revival.Aimlock.AirShot and Revival.Target.Character:FindFirstChild("Humanoid") and Revival.Target.Character.Humanoid.FloorMaterial == Enum.Material.Air then
+                    args[2] = Revival.Target.Character[Revival.Aimlock.AirPart].Position + (Revival.Target.Character[Revival.Aimlock.AirPart].Velocity * Revival.Aimlock.Pred)
                     return Old(self, unpack(args))
                 else
-                    args[2] = Alluka.Target.Character[Alluka.Aimlock.Part].Position
+                    args[2] = Revival.Target.Character[Revival.Aimlock.Part].Position
                     return Old(self, unpack(args))
                 end
             end
-            if Alluka.SilentAim.Enabled and Alluka.SilentAim.Target then
-                if Alluka.SilentAim.Prediction then
-                    args[2] = Alluka.SilentAim.Target.Character[Alluka.SilentAim.Part].Position + (Alluka.SilentAim.Target.Character[Alluka.SilentAim.Part].Velocity * Alluka.SilentAim.Pred)
+            if Revival.SilentAim.Enabled and Revival.SilentAim.Target then
+                if Revival.SilentAim.Prediction then
+                    args[2] = Revival.SilentAim.Target.Character[Revival.SilentAim.Part].Position + (Revival.SilentAim.Target.Character[Revival.SilentAim.Part].Velocity * Revival.SilentAim.Pred)
                     return Old(self, unpack(args))
                 else
-                    args[2] = Alluka.SilentAim.Target.Character[Alluka.SilentAim.Part].Position
+                    args[2] = Revival.SilentAim.Target.Character[Revival.SilentAim.Part].Position
                     return Old(self, unpack(args))
                 end
             end
@@ -349,13 +351,13 @@ AimingSection:AddKeybind(
         Name = "Keybind",
         Keybind = "C",
         Pressed = function()
-            if Alluka.Target then
-                Alluka.Target = nil
+            if Revival.Target then
+                Revival.Target = nil
                 Notify("Revival | Target", "Targets cleared", 3)
             else
-                Alluka.Target = GetClosestPlayer()
-                if Alluka.Target then
-                    Notify("Revival | Target", "Target acquired: " ..tostring(Alluka.Target), 3)
+                Revival.Target = GetClosestPlayer()
+                if Revival.Target then
+                    Notify("Revival | Target", "Target acquired: " ..tostring(Revival.Target), 3)
                 else
                     Notify("Revival | Target", "No valid targets found", 3)
                 end
@@ -366,80 +368,80 @@ AimingSection:AddKeybind(
 AimingSection:AddToggle(
     {
         Name = "Aimlock - outdated",
-        Value = Alluka.Aimlock.Enabled,
-        Keybind = Alluka.Aimlock.Key,
+        Value = Revival.Aimlock.Enabled,
+        Keybind = Revival.Aimlock.Key,
         Callback = function(v)
-            Alluka.Aimlock.Enabled = v
-            Notify("Revival | Aimlock", "Aimlock : "..tostring(Alluka.Aimlock.Enabled), 3)
+            Revival.Aimlock.Enabled = v
+            Notify("Revival | Aimlock", "Aimlock : "..tostring(Revival.Aimlock.Enabled), 3)
         end
     }
 )
 AimingSection:AddToggle(
     {
         Name = "Air Shot",
-        Value = Alluka.Aimlock.AirShot,
+        Value = Revival.Aimlock.AirShot,
         Callback = function(v)
-            Alluka.Aimlock.AirShot = v
-            Notify("Revival | Aimlock", "Air Shot : "..tostring(Alluka.Aimlock.AirShot), 3)
+            Revival.Aimlock.AirShot = v
+            Notify("Revival | Aimlock", "Air Shot : "..tostring(Revival.Aimlock.AirShot), 3)
         end
     }
 )
 AimingSection:AddDropdown(
     {
         Name = "Aim Part",
-        Value = Alluka.Aimlock.Part,
+        Value = Revival.Aimlock.Part,
         List = {"Head", "UpperTorso", "HumanoidRootPart", "LowerTorso"},
         Callback = function(v)
-            Alluka.Aimlock.Part = v
-            Notify("Revival | Aimlock", "Part : "..tostring(Alluka.Aimlock.Part), 3)
+            Revival.Aimlock.Part = v
+            Notify("Revival | Aimlock", "Part : "..tostring(Revival.Aimlock.Part), 3)
         end
     }
 )
 AimingSection:AddDropdown(
     {
         Name = "Air Part",
-        Value = Alluka.Aimlock.AirPart,
+        Value = Revival.Aimlock.AirPart,
         List = {"Head", "UpperTorso", "HumanoidRootPart", "LowerTorso"},
         Callback = function(v)
-            Alluka.Aimlock.AirPart = v
-            Notify("Revival | Aimlock", "Air Part : "..tostring(Alluka.Aimlock.AirPart), 3)
+            Revival.Aimlock.AirPart = v
+            Notify("Revival | Aimlock", "Air Part : "..tostring(Revival.Aimlock.AirPart), 3)
         end
     }
 )
 AimingSection:AddToggle(
     {
         Name = "Look At",
-        Value = Alluka.Aimlock.LookAt,
+        Value = Revival.Aimlock.LookAt,
         Callback = function(v)
-            Alluka.LookAt = v
-            Notify("Revival | Aimlock", "Look At : "..tostring(Alluka.LookAt), 3)
+            Revival.LookAt = v
+            Notify("Revival | Aimlock", "Look At : "..tostring(Revival.LookAt), 3)
         end
     }
 )
 AimingSection:AddToggle(
     {
         Name = "Resolver",
-        Value = Alluka.Aimlock.Resolver,
+        Value = Revival.Aimlock.Resolver,
         Callback = function(v)
-            Alluka.Aimlock.Resolver = v
-            Notify("Revival | Aimlock", "Resolver : "..tostring(Alluka.Aimlock.Resolver), 3)
+            Revival.Aimlock.Resolver = v
+            Notify("Revival | Aimlock", "Resolver : "..tostring(Revival.Aimlock.Resolver), 3)
         end
     }
 )
 AimingSection:AddToggle(
     {
         Name = "Prediction",
-        Value = Alluka.Aimlock.Prediction,
+        Value = Revival.Aimlock.Prediction,
         Callback = function(v)
-            Alluka.Aimlock.Prediction = v
-            Notify("Revival | Aimlock", "Prediction : "..tostring(Alluka.Aimlock.Prediction), 3)
+            Revival.Aimlock.Prediction = v
+            Notify("Revival | Aimlock", "Prediction : "..tostring(Revival.Aimlock.Prediction), 3)
         end
     }
 )
 local AimlockPrediction = AimingSection:AddSlider(
     {
         Name = "Aimbot Prediction",
-        Value = Alluka.Aimlock.Pred,
+        Value = Revival.Aimlock.Pred,
         Min = 0,
         Max = 1,
         Decimals = 3,
@@ -447,70 +449,70 @@ local AimlockPrediction = AimingSection:AddSlider(
             return "Prediction: " .. tostring(v)
         end,
         Callback = function(v)
-            Alluka.Aimlock.Pred = v
-            Notify("Revival | Aimlock", "Prediction: " .. tostring(Alluka.Aimlock.Pred), 3)
+            Revival.Aimlock.Pred = v
+            Notify("Revival | Aimlock", "Prediction: " .. tostring(Revival.Aimlock.Pred), 3)
         end
     }
 )
 AimingSection:AddToggle(
     {
         Name = "Auto Prediction",
-        Value = Alluka.Aimlock.AutoPrediction,
+        Value = Revival.Aimlock.AutoPrediction,
         Callback = function(v)
-            Alluka.Aimlock.AutoPrediction = v
-            Notify("Revival | Aimlock", "Auto Prediction : "..tostring(Alluka.Aimlock.AutoPrediction), 3)
+            Revival.Aimlock.AutoPrediction = v
+            Notify("Revival | Aimlock", "Auto Prediction : "..tostring(Revival.Aimlock.AutoPrediction), 3)
             repeat
-                if Alluka.Aimlock.AutoPrediction then
+                if Revival.Aimlock.AutoPrediction then
                     local ping = tonumber((game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValueString() or ""):split(" ")[1])
                     if ping then
                         if ping > 200 and ping < 300 then 
-                            Alluka.Aimlock.Pred = 0.18742
+                            Revival.Aimlock.Pred = 0.18742
                         elseif ping > 180 and ping < 195 then 
-                            Alluka.Aimlock.Pred = 0.16779123
+                            Revival.Aimlock.Pred = 0.16779123
                         elseif ping > 140 and ping < 180 then 
-                            Alluka.Aimlock.Pred = 0.16
+                            Revival.Aimlock.Pred = 0.16
                         elseif ping > 110 and ping < 140 then 
-                            Alluka.Aimlock.Pred = 0.15934
+                            Revival.Aimlock.Pred = 0.15934
                         elseif ping < 105 and ping > 90 then
-                            Alluka.Aimlock.Pred = 0.138
+                            Revival.Aimlock.Pred = 0.138
                         elseif ping < 90 and ping > 80 then
-                            Alluka.Aimlock.Pred = 0.136
+                            Revival.Aimlock.Pred = 0.136
                         elseif ping < 80 and ping > 70 then
-                            Alluka.Aimlock.Pred = 0.134
+                            Revival.Aimlock.Pred = 0.134
                         elseif ping < 70 and ping > 60 then
-                            Alluka.Aimlock.Pred = 0.131
+                            Revival.Aimlock.Pred = 0.131
                         elseif ping < 60 and ping > 50 then
-                            Alluka.Aimlock.Pred = 0.1229
+                            Revival.Aimlock.Pred = 0.1229
                         elseif ping < 50 and ping > 40 then
-                            Alluka.Aimlock.Pred = 0.1225
+                            Revival.Aimlock.Pred = 0.1225
                         elseif ping < 40 then
-                            Alluka.Aimlock.Pred = 0.1256
+                            Revival.Aimlock.Pred = 0.1256
                         end
-                        AimlockPrediction:RawSet(Alluka.Aimlock.Pred)
+                        AimlockPrediction:RawSet(Revival.Aimlock.Pred)
                     end
                 end
                 wait()
-            until not Alluka.Aimlock.AutoPrediction
+            until not Revival.Aimlock.AutoPrediction
         end
     }
 )
 AimingSection:AddToggle(
     {
         Name = "Knocked Check",
-        Value = Alluka.Aimlock.KnockedCheck,
+        Value = Revival.Aimlock.KnockedCheck,
         Callback = function(v)
-            Alluka.Aimlock.KnockedCheck = v
-            Notify("Revival | Aimlock", "Knocked Check : "..tostring(Alluka.Aimlock.KnockedCheck), 3)
+            Revival.Aimlock.KnockedCheck = v
+            Notify("Revival | Aimlock", "Knocked Check : "..tostring(Revival.Aimlock.KnockedCheck), 3)
         end
     }
 )
 AimingSection:AddToggle(
     {
         Name = "Grabbed Check",
-        Value = Alluka.Aimlock.GrabbedCheck,
+        Value = Revival.Aimlock.GrabbedCheck,
         Callback = function(v)
-            Alluka.Aimlock.GrabbedCheck = v
-            Notify("Revival | Aimlock", "Grabbed Check : "..tostring(Alluka.Aimlock.GrabbedCheck), 3)
+            Revival.Aimlock.GrabbedCheck = v
+            Notify("Revival | Aimlock", "Grabbed Check : "..tostring(Revival.Aimlock.GrabbedCheck), 3)
         end
     }
 )
@@ -520,11 +522,11 @@ local CameraSection = AimTab:CreateSection({Name = "Camera Aimlock", Side = "Rig
 CameraSection:AddToggle(
     {
         Name = "Camlock",
-        Value = Alluka.Camlock.Enabled,
-        Keybind = Alluka.Camlock.Key,
+        Value = Revival.Camlock.Enabled,
+        Keybind = Revival.Camlock.Key,
         Callback = function(v)
-            Alluka.Camlock.Enabled = v
-            Notify("Revival | Camlock", "Camlock : " .. tostring(Alluka.Camlock.Enabled), 3)
+            Revival.Camlock.Enabled = v
+            Notify("Revival | Camlock", "Camlock : " .. tostring(Revival.Camlock.Enabled), 3)
         end
     }
 )
@@ -532,10 +534,10 @@ CameraSection:AddToggle(
 CameraSection:AddToggle(
     {
         Name = "Air Shot",
-        Value = Alluka.Camlock.AirShot,
+        Value = Revival.Camlock.AirShot,
         Callback = function(v)
-            Alluka.Camlock.AirShot = v
-            Notify("Revival | Camlock", "Air Shot : "..tostring(Alluka.Camlock.AirShot), 3)
+            Revival.Camlock.AirShot = v
+            Notify("Revival | Camlock", "Air Shot : "..tostring(Revival.Camlock.AirShot), 3)
         end
     }
 )
@@ -543,49 +545,49 @@ CameraSection:AddToggle(
 CameraSection:AddDropdown(
     {
         Name = "Aim Part",
-        Value = Alluka.Camlock.Part,
+        Value = Revival.Camlock.Part,
         List = {"Head", "UpperTorso", "HumanoidRootPart", "LowerTorso"},
         Callback = function(v)
-            Alluka.Camlock.Part = v
-            Notify("Revival | Camlock", "Part : "..tostring(Alluka.Camlock.Part), 3)
+            Revival.Camlock.Part = v
+            Notify("Revival | Camlock", "Part : "..tostring(Revival.Camlock.Part), 3)
         end
     }
 )
 CameraSection:AddDropdown(
     {
         Name = "Air Part",
-        Value = Alluka.Camlock.AirPart,
+        Value = Revival.Camlock.AirPart,
         List = {"Head", "UpperTorso", "HumanoidRootPart", "LowerTorso"},
         Callback = function(v)
-            Alluka.Camlock.AirPart = v
-            Notify("Revival | Camlock", "Air Part : "..tostring(Alluka.Camlock.AirPart), 3)
+            Revival.Camlock.AirPart = v
+            Notify("Revival | Camlock", "Air Part : "..tostring(Revival.Camlock.AirPart), 3)
         end
     }
 )
 CameraSection:AddToggle(
     {
         Name = "Resolver",
-        Value = Alluka.Camlock.Resolver,
+        Value = Revival.Camlock.Resolver,
         Callback = function(v)
-            Alluka.Camlock.Resolver = v
-            Notify("Revival | Camlock", "Resolver : " .. tostring(Alluka.Camlock.Resolver), 3)
+            Revival.Camlock.Resolver = v
+            Notify("Revival | Camlock", "Resolver : " .. tostring(Revival.Camlock.Resolver), 3)
         end
     }
 )
 CameraSection:AddToggle(
     {
         Name = "Smoothness",
-        Value = Alluka.Camlock.Smoothness,
+        Value = Revival.Camlock.Smoothness,
         Callback = function(v)
-            Alluka.Camlock.Smoothness = v
-            Notify("Revival | Camlock", "Smoothness : "..tostring(Alluka.Camlock.Smoothness), 3)
+            Revival.Camlock.Smoothness = v
+            Notify("Revival | Camlock", "Smoothness : "..tostring(Revival.Camlock.Smoothness), 3)
         end
     }
 )
 CameraSection:AddSlider(
     {
         Name = "Smoothness Amount",
-        Value = Alluka.Camlock.SmoothnessAmount,
+        Value = Revival.Camlock.SmoothnessAmount,
         Min = 0,
         Max = 1,
         Decimals = 2,
@@ -593,30 +595,30 @@ CameraSection:AddSlider(
             return "Smoothness: " .. tostring(v)
         end,
         Callback = function(v)
-            Alluka.Camlock.SmoothnessAmount = v
-            Notify("Revival | Camlock", "Smoothness Amount: " .. tostring(Alluka.Camlock.SmoothnessAmount), 3)
+            Revival.Camlock.SmoothnessAmount = v
+            Notify("Revival | Camlock", "Smoothness Amount: " .. tostring(Revival.Camlock.SmoothnessAmount), 3)
         end
     }
 )
 CameraSection:AddDropdown(
     {
         Name = "Easing Style",
-        Value = Alluka.Camlock.EasingStyle,
+        Value = Revival.Camlock.EasingStyle,
         List = {"Sine", "Back", "Quad", "Cubic", "Quart", "Quint", "Linear", "Bounce", "Elastic", "Circular", "Exponential",},
         Callback = function(v)
-            Alluka.Camlock.EasingStyle = v
-            Notify("Revival | Camlock", "Easing Style : "..tostring(Alluka.Camlock.EasingStyle), 3)
+            Revival.Camlock.EasingStyle = v
+            Notify("Revival | Camlock", "Easing Style : "..tostring(Revival.Camlock.EasingStyle), 3)
         end
     }
 )
 CameraSection:AddDropdown(
     {
         Name = "Easing Direction",
-        Value = Alluka.Camlock.EasingDirection,
+        Value = Revival.Camlock.EasingDirection,
         List = {"In", "Out", "InOut", "OutIn"},
         Callback = function(v)
-            Alluka.Camlock.EasingDirection = v
-            Notify("Revival | Camlock", "Easing Style : "..tostring(Alluka.Camlock.EasingDirection), 3)
+            Revival.Camlock.EasingDirection = v
+            Notify("Revival | Camlock", "Easing Style : "..tostring(Revival.Camlock.EasingDirection), 3)
         end
     }
 )
@@ -624,17 +626,17 @@ CameraSection:AddDropdown(
 CameraSection:AddToggle(
     {
         Name = "Prediction",
-        Value = Alluka.Camlock.Prediction,
+        Value = Revival.Camlock.Prediction,
         Callback = function(v)
-            Alluka.Camlock.Prediction = v
-            Notify("Revival | Camlock", "Prediction : "..tostring(Alluka.Camlock.Prediction), 3)
+            Revival.Camlock.Prediction = v
+            Notify("Revival | Camlock", "Prediction : "..tostring(Revival.Camlock.Prediction), 3)
         end
     }
 )
 local CameraPrediction = CameraSection:AddSlider(
     {
         Name = "Camera Prediction",
-        Value = Alluka.Camlock.Pred,
+        Value = Revival.Camlock.Pred,
         Min = 0,
         Max = 1,
         Decimals = 3,
@@ -642,70 +644,70 @@ local CameraPrediction = CameraSection:AddSlider(
             return "Prediction: " .. tostring(v)
         end,
         Callback = function(v)
-            Alluka.Camlock.Pred = v
-            Notify("Revival | Camlock", "Prediction : " .. tostring(Alluka.Camlock.Prediction), 3)
+            Revival.Camlock.Pred = v
+            Notify("Revival | Camlock", "Prediction : " .. tostring(Revival.Camlock.Prediction), 3)
         end
     }
 )
 CameraSection:AddToggle(
     {
         Name = "Auto Prediction",
-        Value = Alluka.Camlock.AutoPrediction,
+        Value = Revival.Camlock.AutoPrediction,
         Callback = function(v)
-            Alluka.Camlock.AutoPrediction = v
-            Notify("Revival | Camlock", "Auto Prediction : "..tostring(Alluka.Camlock.AutoPrediction), 3)
+            Revival.Camlock.AutoPrediction = v
+            Notify("Revival | Camlock", "Auto Prediction : "..tostring(Revival.Camlock.AutoPrediction), 3)
             repeat
-                if Alluka.Camlock.AutoPrediction then
+                if Revival.Camlock.AutoPrediction then
                     local ping = tonumber((game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValueString() or ""):split(" ")[1])
                     if ping then
                         if ping > 200 and ping < 300 then 
-                            Alluka.Camlock.Pred = 0.18742
+                            Revival.Camlock.Pred = 0.18742
                         elseif ping > 180 and ping < 195 then 
-                            Alluka.Camlock.Pred = 0.16779123
+                            Revival.Camlock.Pred = 0.16779123
                         elseif ping > 140 and ping < 180 then 
-                            Alluka.Camlock.Pred = 0.16
+                            Revival.Camlock.Pred = 0.16
                         elseif ping > 110 and ping < 140 then 
-                            Alluka.Camlock.Pred = 0.15934
+                            Revival.Camlock.Pred = 0.15934
                         elseif ping < 105 and ping > 90 then
-                            Alluka.Camlock.Pred = 0.138
+                            Revival.Camlock.Pred = 0.138
                         elseif ping < 90 and ping > 80 then
-                            Alluka.Camlock.Pred = 0.136
+                            Revival.Camlock.Pred = 0.136
                         elseif ping < 80 and ping > 70 then
-                            Alluka.Camlock.Pred = 0.134
+                            Revival.Camlock.Pred = 0.134
                         elseif ping < 70 and ping > 60 then
-                            Alluka.Camlock.Pred = 0.131
+                            Revival.Camlock.Pred = 0.131
                         elseif ping < 60 and ping > 50 then
-                            Alluka.Camlock.Pred = 0.1229
+                            Revival.Camlock.Pred = 0.1229
                         elseif ping < 50 and ping > 40 then
-                            Alluka.Camlock.Pred = 0.1225
+                            Revival.Camlock.Pred = 0.1225
                         elseif ping < 40 then
-                            Alluka.Camlock.Pred = 0.1256
+                            Revival.Camlock.Pred = 0.1256
                         end
-                        CameraPrediction:RawSet(Alluka.Camlock.Pred)
+                        CameraPrediction:RawSet(Revival.Camlock.Pred)
                     end
                 end
                 wait()
-            until not Alluka.Camlock.AutoPrediction
+            until not Revival.Camlock.AutoPrediction
         end
     }
 )
 CameraSection:AddToggle(
     {
         Name = "Knocked Check",
-        Value = Alluka.Camlock.KnockedCheck,
+        Value = Revival.Camlock.KnockedCheck,
         Callback = function(v)
-            Alluka.Camlock.KnockedCheck = v
-            Notify("Revival | Camlock", "Knocked Check : "..tostring(Alluka.Camlock.KnockedCheck), 3)
+            Revival.Camlock.KnockedCheck = v
+            Notify("Revival | Camlock", "Knocked Check : "..tostring(Revival.Camlock.KnockedCheck), 3)
         end
     }
 )
 CameraSection:AddToggle(
     {
         Name = "Grabbed Check",
-        Value = Alluka.Camlock.GrabbedCheck,
+        Value = Revival.Camlock.GrabbedCheck,
         Callback = function(v)
-            Alluka.Camlock.GrabbedCheck = v
-            Notify("Revival | Camlock", "Grabbed Check : "..tostring(Alluka.Camlock.GrabbedCheck), 3)
+            Revival.Camlock.GrabbedCheck = v
+            Notify("Revival | Camlock", "Grabbed Check : "..tostring(Revival.Camlock.GrabbedCheck), 3)
         end
     }
 )
@@ -714,60 +716,60 @@ local SilentSection = AimTab:CreateSection({Name = "Silent Aim", Side = "Left"})
 SilentSection:AddToggle(
     {
         Name = "Silent Aim - outdated",
-        Keybind = Alluka.SilentAim.Key,
-        Value = Alluka.SilentAim.Enabled,
+        Keybind = Revival.SilentAim.Key,
+        Value = Revival.SilentAim.Enabled,
         Callback = function(v)
-            Alluka.SilentAim.Enabled = v
-            Notify("Revival | Silent Aim", "Silent Aim : "..tostring(Alluka.SilentAim.Enabled), 3)
+            Revival.SilentAim.Enabled = v
+            Notify("Revival | Silent Aim", "Silent Aim : "..tostring(Revival.SilentAim.Enabled), 3)
         end
     }
 )
 SilentSection:AddToggle(
     {
         Name = "Air Shot",
-        Value = Alluka.SilentAim.AirShot,
+        Value = Revival.SilentAim.AirShot,
         Callback = function(v)
-            Alluka.SilentAim.AirShot = v
-            Notify("Revival | Silent Aim", "Air Shot : "..tostring(Alluka.SilentAim.AirShot), 3)
+            Revival.SilentAim.AirShot = v
+            Notify("Revival | Silent Aim", "Air Shot : "..tostring(Revival.SilentAim.AirShot), 3)
         end
     }
 )
 SilentSection:AddDropdown(
     {
         Name = "Aim Part",
-        Value = Alluka.SilentAim.Part,
+        Value = Revival.SilentAim.Part,
         List = {"Head", "UpperTorso", "HumanoidRootPart", "LowerTorso"},
         Callback = function(v)
-            Alluka.SilentAim.Part = v
-            Notify("Revival | Silent Aim", "Part : "..tostring(Alluka.SilentAim.Part), 3)
+            Revival.SilentAim.Part = v
+            Notify("Revival | Silent Aim", "Part : "..tostring(Revival.SilentAim.Part), 3)
         end
     }
 )
 SilentSection:AddDropdown(
     {
         Name = "Air Part",
-        Value = Alluka.SilentAim.AirPart,
+        Value = Revival.SilentAim.AirPart,
         List = {"Head", "UpperTorso", "HumanoidRootPart", "LowerTorso"},
         Callback = function(v)
-            Alluka.SilentAim.AirPart = v
-            Notify("Revival | Silent Aim", "Air Part : "..tostring(Alluka.SilentAim.AirPart), 3)
+            Revival.SilentAim.AirPart = v
+            Notify("Revival | Silent Aim", "Air Part : "..tostring(Revival.SilentAim.AirPart), 3)
         end
     }
 )
 SilentSection:AddToggle(
     {
         Name = "Prediction",
-        Value = Alluka.SilentAim.Prediction,
+        Value = Revival.SilentAim.Prediction,
         Callback = function(v)
-            Alluka.SilentAim.Prediction = v
-            Notify("Revival | Silent Aim", "Prediction : "..tostring(Alluka.SilentAim.Prediction), 3)
+            Revival.SilentAim.Prediction = v
+            Notify("Revival | Silent Aim", "Prediction : "..tostring(Revival.SilentAim.Prediction), 3)
         end
     }
 )
 local SlientPrediction = SilentSection:AddSlider(
     {
         Name = "Aimbot Prediction",
-        Value = Alluka.SilentAim.Pred,
+        Value = Revival.SilentAim.Pred,
         Min = 0,
         Max = 1,
         Decimals = 3,
@@ -775,70 +777,70 @@ local SlientPrediction = SilentSection:AddSlider(
             return "Prediction: " .. tostring(v)
         end,
         Callback = function(v)
-            Alluka.SilentAim.Pred = v
-            Notify("Revival | Silent Aim", "Prediction : " .. tostring(Alluka.SilentAim.Pred), 3)
+            Revival.SilentAim.Pred = v
+            Notify("Revival | Silent Aim", "Prediction : " .. tostring(Revival.SilentAim.Pred), 3)
         end
     }
 )
 SilentSection:AddToggle(
     {
         Name = "Auto Prediction",
-        Value = Alluka.SilentAim.AutoPrediction,
+        Value = Revival.SilentAim.AutoPrediction,
         Callback = function(v)
-            Alluka.SilentAim.AutoPrediction = v
-            Notify("Revival | Silent Aim", "Auto Prediction : "..tostring(Alluka.SilentAim.AutoPrediction), 3)
+            Revival.SilentAim.AutoPrediction = v
+            Notify("Revival | Silent Aim", "Auto Prediction : "..tostring(Revival.SilentAim.AutoPrediction), 3)
             repeat
-                if Alluka.SilentAim.AutoPrediction then
+                if Revival.SilentAim.AutoPrediction then
                     local ping = tonumber((game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValueString() or ""):split(" ")[1])
                     if ping then
                         if ping > 200 and ping < 300 then 
-                            Alluka.SilentAim.Pred = 0.18742
+                            Revival.SilentAim.Pred = 0.18742
                         elseif ping > 180 and ping < 195 then 
-                            Alluka.SilentAim.Pred = 0.16779123
+                            Revival.SilentAim.Pred = 0.16779123
                         elseif ping > 140 and ping < 180 then 
-                            Alluka.SilentAim.Pred = 0.16
+                            Revival.SilentAim.Pred = 0.16
                         elseif ping > 110 and ping < 140 then 
-                            Alluka.SilentAim.Pred = 0.15934
+                            Revival.SilentAim.Pred = 0.15934
                         elseif ping < 105 and ping > 90 then
-                            Alluka.SilentAim.Pred = 0.138
+                            Revival.SilentAim.Pred = 0.138
                         elseif ping < 90 and ping > 80 then
-                            Alluka.SilentAim.Pred = 0.136
+                            Revival.SilentAim.Pred = 0.136
                         elseif ping < 80 and ping > 70 then
-                            Alluka.SilentAim.Pred = 0.134
+                            Revival.SilentAim.Pred = 0.134
                         elseif ping < 70 and ping > 60 then
-                            Alluka.SilentAim.Pred = 0.131
+                            Revival.SilentAim.Pred = 0.131
                         elseif ping < 60 and ping > 50 then
-                            Alluka.SilentAim.Pred = 0.1229
+                            Revival.SilentAim.Pred = 0.1229
                         elseif ping < 50 and ping > 40 then
-                            Alluka.SilentAim.Pred = 0.1225
+                            Revival.SilentAim.Pred = 0.1225
                         elseif ping < 40 then
-                            Alluka.SilentAim.Pred = 0.1256
+                            Revival.SilentAim.Pred = 0.1256
                         end
-                        SlientPrediction:RawSet(Alluka.SilentAim.Pred)
+                        SlientPrediction:RawSet(Revival.SilentAim.Pred)
                     end
                 end
                 wait()
-            until not Alluka.SilentAim.AutoPrediction
+            until not Revival.SilentAim.AutoPrediction
         end
     }
 )
 SilentSection:AddToggle(
     {
         Name = "Knocked Check",
-        Value = Alluka.Camlock.KnockedCheck,
+        Value = Revival.Camlock.KnockedCheck,
         Callback = function(v)
-            Alluka.Camlock.KnockedCheck = v
-            Notify("Revival | Camlock", "Knocked Check : "..tostring(Alluka.SilentAim.KnockedCheck), 3)
+            Revival.Camlock.KnockedCheck = v
+            Notify("Revival | Camlock", "Knocked Check : "..tostring(Revival.SilentAim.KnockedCheck), 3)
         end
     }
 )
 SilentSection:AddToggle(
     {
         Name = "Grabbed Check",
-        Value = Alluka.SilentAim.GrabbedCheck,
+        Value = Revival.SilentAim.GrabbedCheck,
         Callback = function(v)
-            Alluka.SilentAim.GrabbedCheck = v
-            Notify("Revival | Silent Aim", "Grabbed Check : "..tostring(Alluka.SilentAim.GrabbedCheck), 3)
+            Revival.SilentAim.GrabbedCheck = v
+            Notify("Revival | Silent Aim", "Grabbed Check : "..tostring(Revival.SilentAim.GrabbedCheck), 3)
         end
     }
 )
@@ -860,49 +862,49 @@ SilentSection:AddToggle(
 SilentSection:AddColorPicker(
     {
         Name = "FOV Color",
-        Value = Alluka.SilentAim.Color,
+        Value = Revival.SilentAim.Color,
         Callback = function(v)
-            Alluka.SilentAim.Color = v
+            Revival.SilentAim.Color = v
         end
     }
 )
 SilentSection:AddToggle(
     {
         Name = "Filled",
-        Value = Alluka.SilentAim.Filled,
+        Value = Revival.SilentAim.Filled,
         Callback = function(v)
-            Alluka.SilentAim.Filled = v
-            Notify("Revival | Silent Aim", "Filled : "..tostring(Alluka.SilentAim.Filled), 3)
+            Revival.SilentAim.Filled = v
+            Notify("Revival | Silent Aim", "Filled : "..tostring(Revival.SilentAim.Filled), 3)
         end
     }
 )
 SilentSection:AddSlider(
     {
         Name = "FOV Size",
-        Value = Alluka.SilentAim.Size,
+        Value = Revival.SilentAim.Size,
         Min = 25,
         Max = 1000,
         Format = function(v)
             return "Size : " .. tostring(v)
         end,
         Callback = function(v)
-            Alluka.SilentAim.Size = v
-            Notify("Revival | Silent Aim", "Size : " .. tostring(Alluka.SilentAim.Size), 3)
+            Revival.SilentAim.Size = v
+            Notify("Revival | Silent Aim", "Size : " .. tostring(Revival.SilentAim.Size), 3)
         end
     }
 )
 SilentSection:AddSlider(
     {
         Name = "Transparency",
-        Value = Alluka.SilentAim.Transparency,
+        Value = Revival.SilentAim.Transparency,
         Min = 0,
         Max = 1,
         Format = function(v)
             return "Transparency : " .. tostring(v)
         end,
         Callback = function(v)
-            Alluka.SilentAim.Transparency = v
-            Notify("Revival | Silent Aim", "Transparency : " .. tostring(Alluka.SilentAim.Transparency), 3)
+            Revival.SilentAim.Transparency = v
+            Notify("Revival | Silent Aim", "Transparency : " .. tostring(Revival.SilentAim.Transparency), 3)
         end
     }
 )
@@ -914,11 +916,11 @@ local CharSection = CharTab:CreateSection({Name = "Character", Side = "Left"})
 CharSection:AddToggle(
     {
         Name = "NoClip",
-        Value = Alluka.NoClip.Enabled,
-        Keybind = Alluka.NoClip.Key,
+        Value = Revival.NoClip.Enabled,
+        Keybind = Revival.NoClip.Key,
         Callback = function(v)
-            Alluka.NoClip.Enabled = v
-            if Alluka.NoClip.Enabled then
+            Revival.NoClip.Enabled = v
+            if Revival.NoClip.Enabled then
                 repeat
                     if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
                         for _, v in pairs(LocalPlayer.Character:GetDescendants()) do
@@ -928,7 +930,7 @@ CharSection:AddToggle(
                         end
                     end
                     RunService.Stepped:Wait()
-                until not Alluka.NoClip.Enabled
+                until not Revival.NoClip.Enabled
             else
                 if LocalPlayer.Character then
                     for _, v in pairs(LocalPlayer.Character:GetDescendants()) do
@@ -944,8 +946,8 @@ CharSection:AddToggle(
 CharSection:AddToggle(
     {
         Name = "Fly",
-        Value = Alluka.Fly.Enabled,
-        Keybind = Alluka.Fly.Key,
+        Value = Revival.Fly.Enabled,
+        Keybind = Revival.Fly.Key,
         Callback = function()
             Fly()
         end
@@ -954,25 +956,25 @@ CharSection:AddToggle(
 CharSection:AddSlider(
     {
         Name = "Fly Speed Multiplier",
-        Value = Alluka.Fly.Speed,
+        Value = Revival.Fly.Speed,
         Min = 0,
         Max = 50,
         Format = function(v)
             return "Fly Speed : " .. tostring(v)
         end,
         Callback = function(v)
-            Alluka.Fly.Speed = v
-            Notify("Revival | Fly", "Speed : " .. tostring(Alluka.Fly.Speed), 3)
+            Revival.Fly.Speed = v
+            Notify("Revival | Fly", "Speed : " .. tostring(Revival.Fly.Speed), 3)
         end
     }
 )
 --[[CharSection:AddToggle(
     {
         Name = "Korblox",
-        Value = Alluka.Korblox.Enabled,
+        Value = Revival.Korblox.Enabled,
         Callback = function(v)
-            Alluka.Korblox.Enabled = v
-            if Alluka.Korblox.Enabled then
+            Revival.Korblox.Enabled = v
+            if Revival.Korblox.Enabled then
                 LocalPlayer.Character.RightFoot.MeshId = "http://www.roblox.com/asset/?id=902942093"
                 LocalPlayer.Character.RightFoot.Transparency = 1
                 LocalPlayer.Character.RightLowerLeg.MeshId = "http://www.roblox.com/asset/?id=902942093"
@@ -980,7 +982,7 @@ CharSection:AddSlider(
                 LocalPlayer.Character.RightUpperLeg.MeshId = "http://www.roblox.com/asset/?id=902942096"
                 LocalPlayer.Character.RightUpperLeg.TextureID = "http://roblox.com/asset/?id=902843398"
             end
-            Notify("Revival | Korblox", "Korblox : "..tostring(Alluka.Korblox.Enabled), 3)
+            Notify("Revival | Korblox", "Korblox : "..tostring(Revival.Korblox.Enabled), 3)
         end
     }
 )]]
@@ -995,78 +997,78 @@ local CharSection = CharTab:CreateSection({Name = "Anti-Aim", Side = "Right"})
 CharSection:AddToggle(
     {
         Name = "Anti Aim",
-        Value = Alluka.AntiAim.Enabled,
-        Keybind = Alluka.AntiAim.Key,
+        Value = Revival.AntiAim.Enabled,
+        Keybind = Revival.AntiAim.Key,
         Callback = function(v)
-            Alluka.AntiAim.Enabled = v
-            Notify("Revival | Anti-Aim", "Anti Aim : "..tostring(Alluka.AntiAim.Enabled), 3)
+            Revival.AntiAim.Enabled = v
+            Notify("Revival | Anti-Aim", "Anti Aim : "..tostring(Revival.AntiAim.Enabled), 3)
         end
     }
 )
 CharSection:AddToggle(
     {
         Name = "Desync",
-        Value = Alluka.Desync.Enabled,
-        Keybind = Alluka.Desync.Key,
+        Value = Revival.Desync.Enabled,
+        Keybind = Revival.Desync.Key,
         Callback = function(v)
-            Alluka.Desync.Enabled = v
-            Notify("Revival | Anti-Aim", "Desync : "..tostring(Alluka.Desync.Enabled), 3)
+            Revival.Desync.Enabled = v
+            Notify("Revival | Anti-Aim", "Desync : "..tostring(Revival.Desync.Enabled), 3)
         end
     }
 )
 CharSection:AddDropdown(
     {
         Name = "AA Type",
-        Value = Alluka.AntiAim.Type,
+        Value = Revival.AntiAim.Type,
         List = {"Sky", "Underground", "Custom Vel"},
         Callback = function(v)
-            Alluka.AntiAim.Type = v
-            Notify("Revival | Anti-Aim", "Anti Aim Type : "..tostring(Alluka.AntiAim.Type), 3)
+            Revival.AntiAim.Type = v
+            Notify("Revival | Anti-Aim", "Anti Aim Type : "..tostring(Revival.AntiAim.Type), 3)
         end
     }
 )
 CharSection:AddSlider(
     {
         Name = "X Velocity",
-        Value = Alluka.AntiAim.XValue,
+        Value = Revival.AntiAim.XValue,
         Min = -999,
         Max = 999,
         Format = function(v)
             return "X Velocity: " .. tostring(v)
         end,
         Callback = function(v)
-            Alluka.AntiAim.XValue = v
-            Notify("Revival | Anti-Aim", "X Velocity: " .. tostring(Alluka.AntiAim.XValue), 3)
+            Revival.AntiAim.XValue = v
+            Notify("Revival | Anti-Aim", "X Velocity: " .. tostring(Revival.AntiAim.XValue), 3)
         end
     }
 )
 CharSection:AddSlider(
     {
         Name = "Y Velocity",
-        Value = Alluka.AntiAim.YValue,
+        Value = Revival.AntiAim.YValue,
         Min = -999,
         Max = 999,
         Format = function(v)
             return "Y Velocity: " .. tostring(v)
         end,
         Callback = function(v)
-            Alluka.AntiAim.YValue = v
-            Notify("Revival | Anti-Aim", "Y Velocity: " .. tostring(Alluka.AntiAim.YValue), 3)
+            Revival.AntiAim.YValue = v
+            Notify("Revival | Anti-Aim", "Y Velocity: " .. tostring(Revival.AntiAim.YValue), 3)
         end
     }
 )
 CharSection:AddSlider(
     {
         Name = "Z Velocity",
-        Value = Alluka.AntiAim.ZValue,
+        Value = Revival.AntiAim.ZValue,
         Min = -999,
         Max = 999,
         Format = function(v)
             return "Z Velocity: " .. tostring(v)
         end,
         Callback = function(v)
-            Alluka.AntiAim.ZValue = v
-            Notify("Revival | Anti-Aim", "Z Velocity: " .. tostring(Alluka.AntiAim.ZValue), 3)
+            Revival.AntiAim.ZValue = v
+            Notify("Revival | Anti-Aim", "Z Velocity: " .. tostring(Revival.AntiAim.ZValue), 3)
         end
     }
 )
@@ -1076,53 +1078,53 @@ local RageSection = CharTab:CreateSection({Name = "Rage", Side = "Left"})
 RageSection:AddKeybind(
     {
         Name = "Sprint Key",
-        Value = Enum.KeyCode[Alluka.Speed.SprintKey],
+        Value = Enum.KeyCode[Revival.Speed.SprintKey],
         Mode = "Held",
         Pressed = function()
             repeat
-                if Alluka.Speed.Enabled then
+                if Revival.Speed.Enabled then
                     if InputService:IsKeyDown("W") or InputService:IsKeyDown("A") or InputService:IsKeyDown("S") or InputService:IsKeyDown("D") then
-                        LocalPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame + LocalPlayer.Character.Humanoid.MoveDirection * Alluka.Speed.Speed
+                        LocalPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame + LocalPlayer.Character.Humanoid.MoveDirection * Revival.Speed.Speed
                     end
                 end
                 game:GetService("RunService").Heartbeat:wait()
-            until not InputService:IsKeyDown(Alluka.Speed.SprintKey)
+            until not InputService:IsKeyDown(Revival.Speed.SprintKey)
         end,
     }
 )
 RageSection:AddToggle(
     {
         Name = "Speed",
-        Value = Alluka.Speed.Enabled,
+        Value = Revival.Speed.Enabled,
         Keybind = "",
         Callback = function(v)
-            Alluka.Speed.Enabled = v
-            Notify("Revival | Speed", "Speed : " .. tostring(Alluka.Speed.Enabled), 3)
+            Revival.Speed.Enabled = v
+            Notify("Revival | Speed", "Speed : " .. tostring(Revival.Speed.Enabled), 3)
         end
     }
 )
 RageSection:AddToggle(
     {
         Name = "Spin Bot",
-        Value = Alluka.SpinBot.Enabled,
+        Value = Revival.SpinBot.Enabled,
         Callback = function(v)
-            Alluka.SpinBot.Enabled = v
-            if Alluka.SpinBot.Enabled then
+            Revival.SpinBot.Enabled = v
+            if Revival.SpinBot.Enabled then
                 repeat
                     if LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                        LocalPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(Alluka.SpinBot.Speed), 0)
+                        LocalPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(Revival.SpinBot.Speed), 0)
                     end
                     RunService.RenderStepped:Wait()
-                until not Alluka.SpinBot.Enabled
+                until not Revival.SpinBot.Enabled
             end
-            Notify("Revival | Spin bot", "Spin bot : " .. tostring(Alluka.SpinBot.Enabled), 3)
+            Notify("Revival | Spin bot", "Spin bot : " .. tostring(Revival.SpinBot.Enabled), 3)
         end
     }
 )
 RageSection:AddSlider(
     {
         Name = "Speed Multiplier",
-        Value = Alluka.Speed.Speed,
+        Value = Revival.Speed.Speed,
         Min = 0,
         Max = 10,
         Decimals = 1,
@@ -1130,61 +1132,61 @@ RageSection:AddSlider(
             return "Speed : " .. tostring(v)
         end,
         Callback = function(v)
-            Alluka.Speed.Speed = v
-            Notify("Revival | Speed", "Speed : " .. tostring(Alluka.Speed.Speed), 3)
+            Revival.Speed.Speed = v
+            Notify("Revival | Speed", "Speed : " .. tostring(Revival.Speed.Speed), 3)
         end
     }
 )
 RageSection:AddSlider(
     {
         Name = "Spin Speed Multiplier",
-        Value = Alluka.SpinBot.Speed,
+        Value = Revival.SpinBot.Speed,
         Min = 0,
         Max = 100,
         Format = function(v)
             return "Spin Speed : " .. tostring(v)
         end,
         Callback = function(v)
-            Alluka.SpinBot.Speed = v
-            Notify("Revival | Spin Bot", "Speed : " .. tostring(Alluka.SpinBot.Speed), 3)
+            Revival.SpinBot.Speed = v
+            Notify("Revival | Spin Bot", "Speed : " .. tostring(Revival.SpinBot.Speed), 3)
         end
     }
 )
 RageSection:AddToggle(
     {
         Name = "Strafe",
-        Value = Alluka.Strafe.Enabled,
+        Value = Revival.Strafe.Enabled,
         Callback = function(v)
-            Alluka.Strafe.Enabled = v
-            Notify("Revival | Strafe", "Strafe : " .. tostring(Alluka.Strafe.Enabled), 3)
+            Revival.Strafe.Enabled = v
+            Notify("Revival | Strafe", "Strafe : " .. tostring(Revival.Strafe.Enabled), 3)
         end
     }
 )
 RageSection:AddToggle(
     {
         Name = "View Target",
-        Value = Alluka.Strafe.View,
+        Value = Revival.Strafe.View,
         Callback = function(v)
-            Alluka.Strafe.View = v
-            Notify("Revival | Strafe", "View Target : " .. tostring(Alluka.Strafe.View), 3)
+            Revival.Strafe.View = v
+            Notify("Revival | Strafe", "View Target : " .. tostring(Revival.Strafe.View), 3)
         end
     }
 )
 RageSection:AddDropdown(
     {
         Name = "Strafe Type",
-        Value = Alluka.Strafe.Type,
+        Value = Revival.Strafe.Type,
         List = {"Orbit", "Randomzied"},
         Callback = function(v)
-            Alluka.Strafe.Type = v
-            Notify("Revival | Strafe", "Type : "..tostring(Alluka.Strafe.Type), 3)
+            Revival.Strafe.Type = v
+            Notify("Revival | Strafe", "Type : "..tostring(Revival.Strafe.Type), 3)
         end
     }
 )
 RageSection:AddSlider(
     {
         Name = "Strafe Speed Multiplier",
-        Value = Alluka.Strafe.Speed,
+        Value = Revival.Strafe.Speed,
         Min = 0,
         Max = 10,
         Decimals = 1,
@@ -1192,23 +1194,23 @@ RageSection:AddSlider(
             return "Strafe Speed : " .. tostring(v)
         end,
         Callback = function(v)
-            Alluka.Strafe.Speed = v
-            Notify("Revival | Strafe", "Speed : " .. tostring(Alluka.Strafe.Speed), 3)
+            Revival.Strafe.Speed = v
+            Notify("Revival | Strafe", "Speed : " .. tostring(Revival.Strafe.Speed), 3)
         end
     }
 )
 RageSection:AddSlider(
     {
         Name = "Strafe Distance Multiplier",
-        Value = Alluka.Strafe.Distance,
+        Value = Revival.Strafe.Distance,
         Min = 0,
         Max = 20,
         Format = function(v)
             return "Strafe Distance : " .. tostring(v)
         end,
         Callback = function(v)
-            Alluka.Strafe.Distance = v
-            Notify("Revival | Strafe", "Distance : " .. tostring(Alluka.Strafe.Distance), 3)
+            Revival.Strafe.Distance = v
+            Notify("Revival | Strafe", "Distance : " .. tostring(Revival.Strafe.Distance), 3)
         end
     }
 )
@@ -1219,7 +1221,7 @@ TPSection:AddButton(
     {
         Name = "UFO",
         Callback = function()
-            LocalPlayer.Character.HumanoidRootPart.CFrame = Alluka.Teleports.UFO
+            LocalPlayer.Character.HumanoidRootPart.CFrame = Revival.Teleports.UFO
         end
     }
 )
@@ -1227,7 +1229,7 @@ TPSection:AddButton(
     {
         Name = "Bank",
         Callback = function()
-            LocalPlayer.Character.HumanoidRootPart.CFrame = Alluka.Teleports.Bank
+            LocalPlayer.Character.HumanoidRootPart.CFrame = Revival.Teleports.Bank
         end
     }
 )
@@ -1236,7 +1238,7 @@ TPSection:AddButton(
     {
         Name = "Casino",
         Callback = function()
-            LocalPlayer.Character.HumanoidRootPart.CFrame = Alluka.Teleports.Casino
+            LocalPlayer.Character.HumanoidRootPart.CFrame = Revival.Teleports.Casino
         end
     }
 )
@@ -1245,7 +1247,7 @@ TPSection:AddButton(
     {
         Name = "School",
         Callback = function()
-            LocalPlayer.Character.HumanoidRootPart.CFrame = Alluka.Teleports.School
+            LocalPlayer.Character.HumanoidRootPart.CFrame = Revival.Teleports.School
         end
     }
 )
@@ -1254,7 +1256,7 @@ TPSection:AddButton(
     {
         Name = "Up Hill",
         Callback = function()
-            LocalPlayer.Character.HumanoidRootPart.CFrame = Alluka.Teleports.UpHill
+            LocalPlayer.Character.HumanoidRootPart.CFrame = Revival.Teleports.UpHill
         end
     }
 )
@@ -1264,7 +1266,7 @@ TPSection:AddButton(
     {
         Name = "Down Hill",
         Callback = function()
-            LocalPlayer.Character.HumanoidRootPart.CFrame = Alluka.Teleports.DownHill
+            LocalPlayer.Character.HumanoidRootPart.CFrame = Revival.Teleports.DownHill
         end
     }
 )
@@ -1273,7 +1275,7 @@ TPSection:AddButton(
     {
         Name = "Strip Club",
         Callback = function()
-            LocalPlayer.Character.HumanoidRootPart.CFrame = Alluka.Teleports.StripClub
+            LocalPlayer.Character.HumanoidRootPart.CFrame = Revival.Teleports.StripClub
         end
     }
 )
@@ -1282,7 +1284,7 @@ TPSection:AddButton(
     {
         Name = "Shopping Plaza",
         Callback = function()
-            LocalPlayer.Character.HumanoidRootPart.CFrame = Alluka.Teleports.ShoppingPlaza
+            LocalPlayer.Character.HumanoidRootPart.CFrame = Revival.Teleports.ShoppingPlaza
         end
     }
 )
@@ -1308,7 +1310,7 @@ ArmorSection:AddButton(
                     repeat
                         if workspace.Ignored.Shop:FindFirstChild("[Medium Armor] - $1061") and workspace.Ignored.Shop["[Medium Armor] - $1061"]:FindFirstChild("ClickDetector") then
                             LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.Ignored.Shop["[Medium Armor] - $1061"].Head.CFrame
-                            wait(Alluka.AutoArmor.Delay)
+                            wait(Revival.AutoArmor.Delay)
                             fireclickdetector(workspace.Ignored.Shop["[Medium Armor] - $1061"].ClickDetector)
                         end
                         RunService.RenderStepped:Wait()
@@ -1346,7 +1348,7 @@ ArmorSection:AddButton(
                     repeat
                         if workspace.Ignored.Shop:FindFirstChild("[High-Medium Armor] - $2440") and workspace.Ignored.Shop["[High-Medium Armor] - $2440"]:FindFirstChild("ClickDetector") then
                             LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.Ignored.Shop["[High-Medium Armor] - $2440"].Head.CFrame
-                            wait(Alluka.AutoArmor.Delay)
+                            wait(Revival.AutoArmor.Delay)
                             fireclickdetector(workspace.Ignored.Shop["[High-Medium Armor] - $2440"].ClickDetector)
                         end
                         RunService.RenderStepped:Wait()
@@ -1368,27 +1370,27 @@ ArmorSection:AddButton(
 ArmorSection:AddToggle(
     {
         Name = "Auto Armor",
-        Value = Alluka.AutoArmor.Enabled,
+        Value = Revival.AutoArmor.Enabled,
         Callback = function(v)
-            Alluka.AutoArmor.Enabled = v
-            Notify("Revival | Auto Buy", "Auto Armor : " .. tostring(Alluka.AutoArmor.Enabled), 3)
+            Revival.AutoArmor.Enabled = v
+            Notify("Revival | Auto Buy", "Auto Armor : " .. tostring(Revival.AutoArmor.Enabled), 3)
         end
     }
 )
 ArmorSection:AddToggle(
     {
         Name = "Teleport",
-        Value = Alluka.AutoArmor.TP,
+        Value = Revival.AutoArmor.TP,
         Callback = function(v)
-            Alluka.AutoArmor.TP = v
-            Notify("Revival | Auto Buy", "Teleport: " .. tostring(Alluka.AutoArmor.TP), 3)
+            Revival.AutoArmor.TP = v
+            Notify("Revival | Auto Buy", "Teleport: " .. tostring(Revival.AutoArmor.TP), 3)
         end
     }
 )
 ArmorSection:AddSlider(
     {
         Name = "Buy Delay",
-        Value = Alluka.AutoArmor.Delay,
+        Value = Revival.AutoArmor.Delay,
         Min = 0,
         Max = 1,
         Decimals = 1,
@@ -1396,34 +1398,34 @@ ArmorSection:AddSlider(
             return "Delay: " .. tostring(v)
         end,
         Callback = function(v)
-            Alluka.AutoArmor.Delay = v
-            Notify("Revival | Auto Armor", "Delay: " .. tostring(Alluka.AutoArmor.Delay), 3)
+            Revival.AutoArmor.Delay = v
+            Notify("Revival | Auto Armor", "Delay: " .. tostring(Revival.AutoArmor.Delay), 3)
         end
     }
 )
 ArmorSection:AddSlider(
     {
         Name = "Buy Health",
-        Value = Alluka.AutoArmor.BuyHP,
+        Value = Revival.AutoArmor.BuyHP,
         Min = 25,
         Max = 100,
         Format = function(v)
             return "Buy Armor HP: " .. tostring(v)
         end,
         Callback = function(v)
-            Alluka.AutoArmor.BuyHP = v
-            Notify("Revival | Auto Armor", "Buy Armor: " .. tostring(Alluka.AutoArmor.BuyHP), 3)
+            Revival.AutoArmor.BuyHP = v
+            Notify("Revival | Auto Armor", "Buy Armor: " .. tostring(Revival.AutoArmor.BuyHP), 3)
         end
     }
 )
 ArmorSection:AddDropdown(
     {
         Name = "Armor To Buy",
-        Value = Alluka.AutoArmor.ArmorToBuy,
+        Value = Revival.AutoArmor.ArmorToBuy,
         List = {"[Medium Armor] - $1061", "[High-Medium Armor] - $2440"},
         Callback = function(v)
-            Alluka.AutoArmor.ArmorToBuy = v
-            Notify("Revival | Auto Buy", "Armor : "..tostring(Alluka.AutoArmor.ArmorToBuy), 3)
+            Revival.AutoArmor.ArmorToBuy = v
+            Notify("Revival | Auto Buy", "Armor : "..tostring(Revival.AutoArmor.ArmorToBuy), 3)
         end
     }
 )
@@ -1432,11 +1434,11 @@ ArmorSection:AddDropdown(
 ArmorSection:AddDropdown(
     {
         Name = "Food To Buy",
-        Value = Alluka.AutoHeal.FoodToBuy,
+        Value = Revival.AutoHeal.FoodToBuy,
         List = {"[Chicken] - $7", "[Popcorn] - $7", "[Donut] - $5", "[HotDog] - $8", "[Pizza] - $5", "[Taco] - $2"},
         Callback = function(v)
-            Alluka.AutoHeal.FoodToBuy = v
-            Notify("Revival | Auto Buy", "Food : "..tostring(Alluka.AutoHeal.FoodToBuy), 3)
+            Revival.AutoHeal.FoodToBuy = v
+            Notify("Revival | Auto Buy", "Food : "..tostring(Revival.AutoHeal.FoodToBuy), 3)
         end
     }
 )]]
@@ -1450,9 +1452,9 @@ GotoSection:AddTextbox(
         Callback = function(v)
             local TeleportTarget = FindPlayer(v)
             if TeleportTarget and TeleportTarget.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                if Alluka.PTele.Type == "Tween" then
-                    TweenService:Create(LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(Alluka.PTele.Speed, Enum.EasingStyle.Linear), {CFrame = TeleportTarget.Character.HumanoidRootPart.CFrame}):Play()
-                elseif Alluka.PTele.Type == "CFrame" then
+                if Revival.PTele.Type == "Tween" then
+                    TweenService:Create(LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(Revival.PTele.Speed, Enum.EasingStyle.Linear), {CFrame = TeleportTarget.Character.HumanoidRootPart.CFrame}):Play()
+                elseif Revival.PTele.Type == "CFrame" then
                     LocalPlayer.Character.HumanoidRootPart.CFrame = TeleportTarget.Character.HumanoidRootPart.CFrame
                 end
             end
@@ -1462,26 +1464,26 @@ GotoSection:AddTextbox(
 GotoSection:AddDropdown(
     {
         Name = "Teleport Type",
-        Value = Alluka.PTele.Type,
+        Value = Revival.PTele.Type,
         List = {"Tween", "CFrame"},
         Callback = function(v)
-            Alluka.PTele.Type = v
-            Notify("Revival | Teleport", "Teleport Type : "..tostring(Alluka.PTele.Type), 3)
+            Revival.PTele.Type = v
+            Notify("Revival | Teleport", "Teleport Type : "..tostring(Revival.PTele.Type), 3)
         end
     }
 )
 GotoSection:AddSlider(
     {
         Name = "Teleport Speed",
-        Value = Alluka.PTele.Speed,
+        Value = Revival.PTele.Speed,
         Min = 0,
         Max = 5,
         Format = function(v)
             return "Speed: " .. tostring(v)
         end,
         Callback = function(v)
-            Alluka.PTele.Speed = v
-            Notify("Revival | Teleport", "Speed: " .. tostring(Alluka.PTele.Speed), 3)
+            Revival.PTele.Speed = v
+            Notify("Revival | Teleport", "Speed: " .. tostring(Revival.PTele.Speed), 3)
         end
     }
 )
@@ -1508,23 +1510,23 @@ MiscSection:AddSlider(
 MiscSection:AddToggle(
     {
         Name = "Show Chat",
-        Value = Alluka.Visuals.Chat,
+        Value = Revival.Visuals.Chat,
         Callback = function(v)
-            Alluka.Visuals.Chat = v
-            LocalPlayer.PlayerGui.Chat.Frame.ChatChannelParentFrame.Visible = Alluka.Visuals.Chat
+            Revival.Visuals.Chat = v
+            LocalPlayer.PlayerGui.Chat.Frame.ChatChannelParentFrame.Visible = Revival.Visuals.Chat
             LocalPlayer.PlayerGui.Chat.Frame.ChatChannelParentFrame.Position = UDim2.new(0, 0, 0, 160)
-            Notify("Revival | Notification", "Chat: " .. tostring(Alluka.Visuals.Chat), 3)
+            Notify("Revival | Notification", "Chat: " .. tostring(Revival.Visuals.Chat), 3)
         end
     }
 )
 MiscSection:AddToggle(
     {
         Name = "Headless",
-        Value = Alluka.Headless.Enabled,
+        Value = Revival.Headless.Enabled,
         Callback = function(v)
-            Alluka.Headless.Enabled = v
-            Notify("Revival | Headless", "Headless : "..tostring(Alluka.Headless.Enabled), 3)
-            if Alluka.Headless.Enabled then
+            Revival.Headless.Enabled = v
+            Notify("Revival | Headless", "Headless : "..tostring(Revival.Headless.Enabled), 3)
+            if Revival.Headless.Enabled then
                 LocalPlayer.Character.Head.Transparency = 1
                     for i, v in pairs(LocalPlayer.Character.Head:GetChildren()) do 
                         if (v:IsA('Decal')) then
@@ -1545,30 +1547,30 @@ MiscSection:AddToggle(
 MiscSection:AddToggle(
     {
         Name = "No Recoil",
-        Value = Alluka.NoRecoil.Enabled,
+        Value = Revival.NoRecoil.Enabled,
         Callback = function(v)
-            Alluka.NoRecoil.Enabled = v
-            Notify("Revival | No Recoil", "No Recoil: " .. tostring(Alluka.NoRecoil.Enabled), 3)
+            Revival.NoRecoil.Enabled = v
+            Notify("Revival | No Recoil", "No Recoil: " .. tostring(Revival.NoRecoil.Enabled), 3)
         end
     }
 )
 MiscSection:AddToggle(
     {
         Name = "No JumpCooldown",
-        Value = Alluka.NoJumpcooldown.Enabled,
+        Value = Revival.NoJumpcooldown.Enabled,
         Callback = function(v)
-            Alluka.NoJumpcooldown.Enabled = v
-            Notify("Revival | No Jump Cooldown", "No Jump Cooldown: " .. tostring(Alluka.NoJumpcooldown.Enabled), 3)
+            Revival.NoJumpcooldown.Enabled = v
+            Notify("Revival | No Jump Cooldown", "No Jump Cooldown: " .. tostring(Revival.NoJumpcooldown.Enabled), 3)
         end
     }
 )
 MiscSection:AddToggle(
     {
         Name = "Notifications",
-        Value = Alluka.Notification.Enabled,
+        Value = Revival.Notification.Enabled,
         Callback = function(v)
-            Alluka.Notification.Enabled = v
-            Notify("Revival | Notification", "Notifications: " .. tostring(Alluka.Notification.Enabled), 3)
+            Revival.Notification.Enabled = v
+            Notify("Revival | Notification", "Notifications: " .. tostring(Revival.Notification.Enabled), 3)
         end
     }
 )
