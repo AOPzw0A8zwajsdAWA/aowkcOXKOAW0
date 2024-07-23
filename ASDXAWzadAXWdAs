@@ -39,7 +39,7 @@ local Revival = {
     Visuals = {Enabled = false, Hitbox = false, Text = false, Name = false, Health = false, Distance = false, Wanted = false, Cham = false, Items = false, Chat = false},
     Desync = {Enabled = false, Key = ""},
     NoClip = {Enabled = false, Key = ""},
-    SpinBot = {Enabled = false, Speed = 50},
+    SpinBot = {Enabled = false, Speed = 5},
     Fly = {Enabled = false, Speed = 4, Key = "V"},
     Strafe = {Enabled = false, Distance = 8, Speed = 2.8, Angle = 0, Type = "Orbit", View = false},
     Speed = {Enabled = false, Speed = 0.4, Key = "", SprintKey = "LeftShift"},
