@@ -14,19 +14,6 @@
 ░░░╚═╝░░░╚══════╝╚═╝░░╚═╝╚═╝░░░░░╚═╝
 ]]
 
-local Hwid = game:GetService("RbxAnalyticsService"):GetClientId() -- Gets your Hwid
-local Whitelist = -- Hwid Table
-    "9A9CDBFC-24A4-48DC-8E29-7D913162F3A6" or
-    "B10FDE52-ED87-4441-8F73-B5ACC12E9378" or
-    "C4365054-20BD-49F4-BD68-C01DA77ED344"
-
-if Hwid == Whitelist then
-    print("Your client id is correct --> " ..Hwid)
-    elseif Hwid ~= Whitelist then
-    print("Your client id is incorrect <-- " ..Hwid)
-    return
-end
-
 repeat
     wait()
 until game:IsLoaded()
