@@ -14,1564 +14,281 @@
 ░░░╚═╝░░░╚══════╝╚═╝░░╚═╝╚═╝░░░░░╚═╝
 ]]
 
-repeat
-    wait()
-until game:IsLoaded()
-local OldPos = nil
+if (not getgenv().Loaded) then
+local userInputService = game:GetService("UserInputService")
+
+local function CheckAnti(Plr) -- // Anti-aim detection
+    if Plr.Character.HumanoidRootPart.Velocity.Y < -70 then
+        return true
+    elseif Plr and (Plr.Character.HumanoidRootPart.Velocity.X > 450 or Plr.Character.HumanoidRootPart.Velocity.X < -35) then
+        return true
+    elseif Plr and Plr.Character.HumanoidRootPart.Velocity.Y > 60 then
+        return true
+    elseif Plr and (Plr.Character.HumanoidRootPart.Velocity.Z > 35 or Plr.Character.HumanoidRootPart.Velocity.Z < -35) then
+        return true
+    else
+        return false
+    end
+end
+
+local function getnamecall()
+     if game.PlaceId == 2788229376 or game.PlaceId == 7213786345 or game.PlaceId == 16033173781 or game.PlaceId == 16158576873 then 
+        return "UpdateMousePosI"
+    elseif game.PlaceId == 5602055394 or game.PlaceId == 7951883376 then
+        return "MousePos"
+    elseif game.PlaceId == 9825515356 then
+        return "GetMousePos"
+    end
+end
+
+function MainEventLocate()
+    for _,v in pairs(game:GetService("ReplicatedStorage"):GetDescendants()) do
+        if v.Name == "MainEvent" then
+            return v
+        end
+    end
+end
+
+local Locking = false
 local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
+local Client = Players.LocalPlayer
+local Plr = nil -- Initialize Plr here
+
+-- 360 on bind
+local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
-local TweenService = game:GetService("TweenService")
-local InputService = game:GetService("UserInputService")
-local TeleportService = game:GetService("TeleportService")
-local MarketplaceService = game:GetService("MarketplaceService")
-local Revival = {
-    Target = nil,
-    LookAt = {Enabled = false},
-    Headless = {Enabled = false},
-    Korblox = {Enabled = false},
-    Notification = {Enabled = false},
-    NoJumpcooldown = {Enabled = false},
-    NoRecoil = {Enabled = false},
-    Aimlock = {Enabled = false, Prediction = false, Pred = 0.147, Part = "UpperTorso", AirShot = false, AirPart = "LowerTorso", KnockedCheck = false, GrabbedCheck = false, Key = "", Resolver = false, AutoPrediction = false},
-    Camlock = {Enabled = false, Prediction = false, Pred = 0.147, Part = "Head", AirShot = false, AirPart = "LowerTorso", KnockedCheck = false, GrabbedCheck = false, Key = "", Resolver = false, AutoPrediction = false, Smoothness = false, SmoothnessAmount = 0.2, EasingStyle = "Sine", EasingDirection = "Out"},
-    SilentAim = {Enabled = false, Target = nil, Prediction = false, Pred = 0.147, Part = "UpperTorso", AirShot = false, AirPart ="LowerTorso", KnockedCheck = false, GrabbedCheck = false, Key = "", Size = 85, Transparency = 0.5, Filled = false, Color = Color3.fromRGB(255, 0, 0)},
-    AntiAim = {Enabled = false, Key = "", XValue = 0, YValue = 0, ZValue = 0, Type = "Sky"},
-    Visuals = {Enabled = false, Hitbox = false, Text = false, Name = false, Health = false, Distance = false, Wanted = false, Cham = false, Items = false, Chat = false},
-    Desync = {Enabled = false, Key = ""},
-    NoClip = {Enabled = false, Key = ""},
-    SpinBot = {Enabled = false, Speed = 5},
-    Fly = {Enabled = false, Speed = 4, Key = "V"},
-    Strafe = {Enabled = false, Distance = 8, Speed = 2.8, Angle = 0, Type = "Orbit", View = false},
-    Speed = {Enabled = false, Speed = 0.4, Key = "", SprintKey = "LeftShift"},
-    AutoArmor = {Enabled = false, TP = false, Delay = 0, BuyHP = 45, ArmorToBuy = "[High-Medium Armor] - $2440"},
-    AutoHeal = {Enabled = false, TP = false, Delay = 0, BuyHP = 25, FoodToBuy = "[Popcorn] - $7"},
-    PTele = {Speed = 0.2, Type = "CFrame"},
-    Teleports = {
-        Bank = CFrame.new(-470.373474, 39.0684624, -284.831848, -0.0511315688, 3.44844828e-08, -0.998691916, -8.0414118e-08, 1, 3.86467356e-08, 0.998691916, 8.22850055e-08, -0.0511315688), 
-        Casino = CFrame.new(-867.366455, 43.7999496, -155.645859, 0.999982715, 7.22820914e-08, 0.00588375516, -7.25752187e-08, 1, 4.96055641e-08, -0.00588375516, -5.00317192e-08, 0.999982715), 
-        StripClub = CFrame.new(-263.665283, 0.0313377157, -328.721832, 0.999999762, 9.82708244e-08, 0.000672494818, -9.82943433e-08, 1, 3.49390987e-08, -0.000672494818, -3.50051934e-08, 0.999999762), 
-        School = CFrame.new(-604.562012, 47.7499886, 244.782974, 0.999673009, -6.03166086e-08, -0.0255717915, 6.24988203e-08, 1, 8.45373478e-08, 0.0255717915, -8.61079101e-08, 0.999673009), 
-        UFO = CFrame.new(70.958992, 156.574448, -689.503174, -0.999162197, -3.74492792e-08, 0.0409258381, -3.533561e-08, 1, 5.23697317e-08, -0.0409258381, 5.08797129e-08, -0.999162197), 
-        UpHill = CFrame.new(481.964111, 62.5341187, -620.900757, -0.9999066, 1.87809519e-08, -0.0136653278, 1.84973032e-08, 1, 2.08831938e-08, 0.0136653278, 2.06284732e-08, -0.9999066), 
-        DownHill = CFrame.new(-577.774292, 22.8150673, -736.13916, -7.75719527e-05, 3.84763332e-08, -1, -1.17687171e-09, 1, 3.8476422e-08, 1, 1.17985643e-09, -7.75719527e-05),
-        ShoppingPlaza = CFrame.new(-991.641235, 42.3799934, -673.324585, -0.0390856378, 2.64607305e-08, -0.999235868, 3.92789197e-08, 1, 2.49445513e-08, 0.999235868, -3.82739316e-08, -0.0390856378)
-    },
-}
-local Library = loadstring(game:GetObjects("rbxassetid://7657867786")[1].Source)()
-local NotifyLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/Dynissimo/main/Scripts/AkaliNotif.lua"))()
-local Wait = Library.subs.Wait -- Only returns if the GUI has not been terminated. For 'while Wait() do' loops
-local Revival = Library:CreateWindow(
-    {
-        Name = "Revival | [S TIER HVH.]", 
-        Themeable = {
-            Info = {
-                ".gg/unlegit", 
-            }, 
-            Credit = false,
-            Background = {
-                Asset = "rbxassetid://15201607668",
-                Visible = 100,
-            }
-        }
-    }
-)
+local Camera = workspace.CurrentCamera
+local Toggle = false -- Initialize Toggle to false
 
-
-local SilentFOV = Drawing.new("Circle")
-SilentFOV.Visible = false
-SilentFOV.Radius = Revival.SilentAim.Size
-SilentFOV.Color = Revival.SilentAim.Color
-SilentFOV.Filled = Revival.SilentAim.Filled
-SilentFOV.Transparency = Revival.SilentAim.Transparency
-
-local function FindPlayer(name)
-    for _, v in pairs(Players:GetPlayers()) do 
-        if string.lower(string.sub(v.Name, 1, string.len(name))) == string.lower(name) then 
-            return v
-        elseif string.lower(string.sub(v.DisplayName, 1, string.len(name))) == string.lower(name) then 
-            return v
+local function OnKeyPress(Input, GameProcessedEvent)
+    if Input.KeyCode == getgenv().RevivalS.Aimbot.Keybind and not GameProcessedEvent then 
+        Toggle = not Toggle
+    elseif Input.KeyCode == getgenv().RevivalS.Macro.SpeedGlitchKey then
+        if getgenv().RevivalS.Macro.Enabled then 
+            getgenv().RevivalS.Macro.SpeedGlitch = not getgenv().RevivalS.Macro.SpeedGlitch
+            if getgenv().RevivalS.Macro.SpeedGlitch then
+                repeat
+                    game:GetService("RunService").Heartbeat:Wait()
+                    keypress(0x49)
+                    game:GetService("RunService").Heartbeat:Wait()
+                    keypress(0x4F)
+                    game:GetService("RunService").Heartbeat:Wait()
+                    keyrelease(0x49)
+                    game:GetService("RunService").Heartbeat:Wait()
+                    keyrelease(0x4F)
+                    game:GetService("RunService").Heartbeat:Wait()
+                until not getgenv().RevivalS.Macro.SpeedGlitch
+            end
         end
     end
 end
 
-local function CheckTarget(player)
-    if Revival.Aimlock.KnockedCheck or Revival.Camlock.KnockedCheck or Revival.SilentAim.KnockedCheck then
-        if player.Character.BodyEffects:FindFirstChild("K.O").Value then return true end
-    end
-    if Revival.Aimlock.GrabbedCheck or Revival.Camlock.GrabbedCheck or Revival.SilentAim.GrabbedCheck then
-        if player.Character:FindFirstChild("GRABBING_CONSTRAINT") then return true end
-    end
-    return false
-end
+UserInputService.InputBegan:Connect(OnKeyPress)
 
-local function GetClosestPlayer()
-    local closestPlayer = nil
-    local shortestDistance = math.huge
-
-    for _, player in pairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer then
-            local character = player.Character
-            local rootPart = character and character:FindFirstChild("HumanoidRootPart")
-
-            if rootPart and character:FindFirstChild("Humanoid")and not CheckTarget(player) then
-                local pos = workspace.CurrentCamera:WorldToViewportPoint(rootPart.Position)
-                local magnitude = (Vector2.new(pos.X, pos.Y) - Vector2.new(LocalPlayer:GetMouse().X, LocalPlayer:GetMouse().Y + 36)).Magnitude
-
-                if magnitude < shortestDistance then
-                    closestPlayer = player
-                    shortestDistance = magnitude
+UserInputService.InputBegan:Connect(function(keygo, ok)
+    if (not ok) then
+        if (keygo.KeyCode == getgenv().RevivalS.Aimbot.Keybind) then
+            Locking = not Locking
+            if Locking then
+                Plr = getClosestPlayerToCursor()
+            elseif not Locking then
+                if Plr then
+                    Plr = nil
                 end
             end
         end
     end
+end)
 
-    return closestPlayer
-end
-
-local function GetSilentPlayer(radius)
-    local closestPlayer = nil
-    local shortestDistance = radius
-
-    for _, player in pairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer then
-            local character = player.Character
-            local rootPart = character and character:FindFirstChild("HumanoidRootPart")
-
-            if rootPart and character:FindFirstChild("Humanoid") and not CheckTarget(player) then
-                local pos, onScreen = workspace.CurrentCamera:WorldToViewportPoint(rootPart.Position)
-                local magnitude = (Vector2.new(pos.X, pos.Y) - InputService:GetMouseLocation()).Magnitude
-
-                if magnitude < shortestDistance and onScreen then
-                    closestPlayer = player
-                    shortestDistance = magnitude
+function getClosestPlayerToCursor()
+    local closestDist = math.huge
+    local closestPlr = nil
+    for _, v in ipairs(Players:GetPlayers()) do
+        if v ~= Client and v.Character and v.Character:FindFirstChild("Humanoid") and v.Character.Humanoid.Health > 0 then
+            local screenPos, cameraVisible = workspace.CurrentCamera:WorldToViewportPoint(v.Character.HumanoidRootPart.Position)
+            if cameraVisible then
+                local distToMouse = (Vector2.new(UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y) - Vector2.new(screenPos.X, screenPos.Y)).Magnitude
+                if distToMouse < closestDist then
+                    closestPlr = v
+                    closestDist = distToMouse
                 end
             end
         end
     end
-
-    return closestPlayer
+    return closestPlr
 end
 
-local function Notify(title, text, time)
-    if Revival.Notification.Enabled then
-        NotifyLibrary.Notify({
-            Title = title;
-            Description = text;
-            Duration = time;
-        })
-    else
-        print(title, text)
-    end
-end
-
-local function Fly()
-    Revival.Fly.Enabled = not Revival.Fly.Enabled
-    Notify("Revival | Fly", "Flying : " .. tostring(Revival.Fly.Enabled), 3)
-    local BodyPosition = Instance.new("BodyPosition", game.Players.LocalPlayer.Character:FindFirstChild("Head"))
-    local BodyGyro = Instance.new("BodyGyro", game.Players.LocalPlayer.Character:FindFirstChild("Head"))
-    BodyPosition.maxForce = Vector3.new(math.huge, math.huge, math.huge)
-    BodyPosition.position = game.Players.LocalPlayer.Character:FindFirstChild("Head").Position
-    BodyGyro.maxTorque = Vector3.new(9e9, 9e9, 9e9)
-    BodyGyro.CFrame = game.Players.LocalPlayer.Character:FindFirstChild("Head").CFrame
-    repeat
-        wait()
-        game.Players.LocalPlayer.Character.Humanoid.PlatformStand = true
-        local New = BodyGyro.CFrame - BodyGyro.CFrame.p + BodyPosition.position
-        if InputService:IsKeyDown("W") then
-            New = New + workspace.CurrentCamera.CoordinateFrame.lookVector * Revival.Fly.Speed
-            BodyGyro.CFrame = workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad(Revival.Fly.Speed * 0), 0, 0)
-        end
-        if InputService:IsKeyDown("S") then
-            New = New - workspace.CurrentCamera.CoordinateFrame.lookVector * Revival.Fly.Speed
-            BodyGyro.CFrame = workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(math.rad(Revival.Fly.Speed * 0), 0, 0)
-        end
-        if InputService:IsKeyDown("D") then
-            New = New * CFrame.new(Revival.Fly.Speed, 0, 0)
-            BodyGyro.CFrame = workspace.CurrentCamera.CoordinateFrame
-        end
-        if InputService:IsKeyDown("A") then
-            New = New * CFrame.new(-Revival.Fly.Speed, 0, 0)
-            BodyGyro.CFrame = workspace.CurrentCamera.CoordinateFrame
-        end
-        BodyPosition.Position = New.p
-    until not Revival.Fly.Enabled
-    Revival.Fly.Enabled = false
-    BodyGyro:Destroy()
-    BodyPosition:Destroy()
-    game.Players.LocalPlayer.Character.Humanoid.PlatformStand = false
-end
-
-
-RunService.Heartbeat:Connect(function()
-
-    if Revival.SilentAim.Enabled and SilentFOV.Visible then
-        SilentFOV.Position = InputService:GetMouseLocation()
-        SilentFOV.Radius = Revival.SilentAim.Size
-        SilentFOV.Transparency = Revival.SilentAim.Transparency
-        SilentFOV.Color = Revival.SilentAim.Color
-        SilentFOV.Filled = Revival.SilentAim.Filled
-        Revival.SilentAim.Target = GetSilentPlayer(SilentFOV.Radius)
-    end
-
-    if Revival.Camlock.Enabled and Revival.Target then
-        local targetPart = Revival.Camlock.Part
-        if Revival.Camlock.AirShot and Revival.Target.Character:FindFirstChild("Humanoid") and Revival.Target.Character.Humanoid:GetState() == Enum.HumanoidStateType.Freefall then
-            targetPart = Revival.Camlock.AirPart
-        end
-
-        local targetPosition = Revival.Target.Character[targetPart].Position
-
-        if Revival.Camlock.Resolver then
-            targetPosition = Revival.Target.Character[targetPart].Position
-        elseif Revival.Camlock.Prediction then
-            local velocity = Revival.Target.Character[targetPart].Velocity
-            if velocity then
-                targetPosition = Revival.Target.Character[targetPart].Position + (velocity * Revival.Camlock.Pred)
+function getClosestPartToCursor(Player)
+    local closestPart, closestDist = nil, math.huge
+    if Player.Character and Player.Character:FindFirstChild("Humanoid") and Player.Character:FindFirstChild("Head") and Player.Character.Humanoid.Health ~= 0 and Player.Character:FindFirstChild("HumanoidRootPart") then
+        for i, part in pairs(Player.Character:GetChildren()) do
+            if part:IsA("BasePart") then
+                local screenPos, cameraVisible = workspace.CurrentCamera:WorldToViewportPoint(part.Position)
+                local distToMouse = (Vector2.new(UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y) - Vector2.new(screenPos.X, screenPos.Y)).Magnitude
+                if distToMouse < closestDist and table.find(getgenv().RevivalS.Aimbot.MultipleTargetPart, part.Name) then
+                    closestPart = part
+                    closestDist = distToMouse
+                end
             end
         end
+        return closestPart
+    end
+end
 
-        if Revival.Camlock.Smoothness then
-            TweenService:Create(
-                workspace.CurrentCamera,
-                TweenInfo.new(
-                    Revival.Camlock.SmoothnessAmount,
-                    Enum.EasingStyle[Revival.Camlock.EasingStyle],
-                    Enum.EasingDirection[Revival.Camlock.EasingDirection]
-                ),
-                {CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, targetPosition)}
-            ):Play()
+game:GetService("RunService").RenderStepped:Connect(function()
+    if Plr and Plr.Character then
+        if getgenv().RevivalS.Aimbot.NearestPart == true and getgenv().RevivalS.Aimbot.Basic == false then
+            getgenv().RevivalS.Aimbot.TargetPart = tostring(getClosestPartToCursor(Plr))
+        elseif getgenv().RevivalS.Aimbot.Basic == true and getgenv().RevivalS.Aimbot.NearestPart == false then
+            getgenv().RevivalS.Aimbot.TargetPart = getgenv().RevivalS.Aimbot.TargetPart
+        end
+    end
+end)
+
+local function getVelocity(Player)
+    local Old = Player.Character.HumanoidRootPart.Position
+    wait(0.145)
+    local Current = Player.Character.HumanoidRootPart.Position
+    return (Current - Old) / 0.145
+end
+
+local function GetShakedVector3(Setting)
+    return Vector3.new(math.random(-Setting * 1e9, Setting * 1e9), math.random(-Setting * 1e9, Setting * 1e9), math.random(-Setting * 1e9, Setting * 1e9)) / 1e9;
+end
+
+local v = nil
+game:GetService("RunService").Heartbeat:Connect(function(deltaTime)
+    if Plr ~= nil and Plr.Character and Plr.Character:FindFirstChild("HumanoidRootPart") then
+        v = getVelocity(Plr)
+    end
+end)
+
+local mainevent = game:GetService("ReplicatedStorage").MainEvent
+
+Client.Character.ChildAdded:Connect(function(child)
+    if child:IsA("Tool") and child:FindFirstChild("MaxAmmo") then
+        child.Activated:Connect(function()
+            if Plr and Plr.Character then
+                local Position = Plr.Character.Humanoid:GetState() == Enum.HumanoidStateType.Freefall and Plr.Character[getgenv().RevivalS.Aimbot.TargetPart].Position + Vector3.new(0, getgenv().RevivalS.Aimbot.JumpOffset, 0) or Plr.Character[getgenv().RevivalS.Aimbot.TargetPart].Position
+                if game.PlaceId == 2788229376 or game.PlaceId == 7213786345 or game.PlaceId == 16033173781 or game.PlaceId == 16158576873 then 
+                    mainevent:FireServer("UpdateMousePosI", Position + ((Plr.Character.HumanoidRootPart.Velocity) * getgenv().RevivalS.Aimbot.Prediction))
+                else
+                    mainevent:FireServer("UpdateMousePos", Position + ((Plr.Character.Humanoid.MoveDirection * Plr.Character.Humanoid.WalkSpeed) * getgenv().RevivalS.Aimbot.Prediction))
+                end
+            end
+        end)
+    end
+end)
+
+Client.CharacterAdded:Connect(function(character)
+    character.ChildAdded:Connect(function(child)
+        if child:IsA("Tool") and child:FindFirstChild("MaxAmmo") then
+            child.Activated:Connect(function()
+                if Plr and Plr.Character then
+                    local Position = Plr.Character.Humanoid:GetState() == Enum.HumanoidStateType.Freefall and Plr.Character[getgenv().RevivalS.Aimbot.TargetPart].Position + Vector3.new(0, getgenv().RevivalS.Aimbot.JumpOffset, 0) or Plr.Character[getgenv().RevivalS.Aimbot.TargetPart].Position
+                    if game.PlaceId == 2788229376 or game.PlaceId == 7213786345 or game.PlaceId == 16033173781 or game.PlaceId == 16158576873 then 
+                        mainevent:FireServer("UpdateMousePosI", Position + ((Plr.Character.HumanoidRootPart.Velocity) * getgenv().RevivalS.Aimbot.Prediction))
+                    else
+                        mainevent:FireServer("UpdateMousePos", Position + ((Plr.Character.Humanoid.MoveDirection * Plr.Character.Humanoid.WalkSpeed) * getgenv().RevivalS.Aimbot.Prediction))
+                    end
+                end
+            end)
+        end
+    end)
+end)
+
+game:GetService("RunService").RenderStepped:Connect(function()
+    if Plr ~= nil and Plr.Character then
+        local Position = Plr.Character.Humanoid:GetState() == Enum.HumanoidStateType.Freefall and Plr.Character[getgenv().RevivalS.Aimbot.TargetPart].Position + Vector3.new(0, getgenv().RevivalS.Aimbot.JumpOffset, 0) or Plr.Character[getgenv().RevivalS.Aimbot.TargetPart].Position
+        if not CheckAnti(Plr) then
+            local Main = CFrame.new(workspace.CurrentCamera.CFrame.p, Position + ((Plr.Character.HumanoidRootPart.Velocity) * getgenv().RevivalS.Aimbot.AimBotSkid) + GetShakedVector3(getgenv().RevivalS.Aimbot.Shake))
+            workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame:Lerp(Main, getgenv().RevivalS.Aimbot.Amount, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
         else
-            workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, targetPosition)
+            local Main = CFrame.new(workspace.CurrentCamera.CFrame.p, Position + ((Plr.Character.Humanoid.MoveDirection * Plr.Character.Humanoid.WalkSpeed) * getgenv().RevivalS.Aimbot.AimBotSkid) + GetShakedVector3(getgenv().RevivalS.Aimbot.CameraShake))
+            workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame:Lerp(Main, getgenv().RevivalS.Aimbot.Amount, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
         end
     end
-
-    if Revival.Strafe.Enabled then
-        if Revival.Target and Revival.Target.Character and Revival.Target.Character:FindFirstChild("HumanoidRootPart") then
-            Revival.Strafe.Angle = Revival.Strafe.Angle + Revival.Strafe.Speed
-
-            if Revival.Strafe.View then
-                game.Workspace.CurrentCamera.CameraSubject = Revival.Target.Character.Humanoid
-            else
-                game.Workspace.CurrentCamera.CameraSubject = LocalPlayer.Character.Humanoid
-            end
-
-            if Revival.Strafe.Type == "Orbit" then
-                LocalPlayer.Character.HumanoidRootPart.CFrame = Revival.Target.Character.HumanoidRootPart.CFrame * CFrame.Angles(0, Revival.Strafe.Angle, 0) * CFrame.new(0, 0, Revival.Strafe.Distance)
-            end
-        else
-            game.Workspace.CurrentCamera.CameraSubject = LocalPlayer.Character.Humanoid
-        end
-    else
-        game.Workspace.CurrentCamera.CameraSubject = LocalPlayer.Character.Humanoid
-    end
-
-    if Revival.AutoArmor.Enabled and Revival.AutoArmor.TP and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        if LocalPlayer.Character.BodyEffects.Armor.Value <= Revival.AutoArmor.BuyHP and workspace.Ignored.Shop:FindFirstChild(Revival.AutoArmor.ArmorToBuy) and not LocalPlayer.Character.BodyEffects["K.O"].Value and not LocalPlayer.Character.BodyEffects["Grabbed"].Value then
-            if not OldPos then
-                OldPos = LocalPlayer.Character.HumanoidRootPart.CFrame
-            end
-
-            local equippedTool = LocalPlayer.Character:FindFirstChildOfClass("Tool")
-            if equippedTool then
-                equippedTool.Parent = LocalPlayer.Backpack
-            end
-
-            local shopItem = workspace.Ignored.Shop:FindFirstChild(Revival.AutoArmor.ArmorToBuy)
-            if shopItem and shopItem:FindFirstChild("ClickDetector") then
-                LocalPlayer.Character.HumanoidRootPart.CFrame = shopItem.Head.CFrame
-                wait(Revival.AutoArmor.Delay)
-                fireclickdetector(shopItem.ClickDetector)
-            end
-
-            if OldPos then
-                LocalPlayer.Character.HumanoidRootPart.CFrame = OldPos
-                OldPos = nil
+    if getgenv().RevivalS.Checks.PlayerDeath == true and Plr and Plr.Character then
+        local KOd = Plr.Character:WaitForChild("BodyEffects")["K.O"].Value
+        local Grabbed = Plr.Character:FindFirstChild("GRABBING_CONSTRAINT") ~= nil
+        if Plr.Character.Humanoid.Health < 1 or KOd or Grabbed then
+            if Locking == true then
+                Plr = nil
+                Locking = false
             end
         end
     end
-
-    if Revival.AntiAim.Enabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        local OldVelocity = LocalPlayer.Character.HumanoidRootPart.Velocity
-        if Revival.AntiAim.Type == "Sky" then
-            LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0, 9999, 0)
-        elseif Revival.AntiAim.Type == "Underground" then
-            LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0, -9999, 0)
-        elseif Revival.AntiAim.Type == "Custom Vel"  then
-            LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(Revival.AntiAim.XValue, Revival.AntiAim.YValue, Revival.AntiAim.ZValue)
+    if getgenv().RevivalS.Checks.TargetDeath == true and Plr and Plr.Character:FindFirstChild("Humanoid") then
+        if Plr.Character.Humanoid.health < 1 then
+            if Locking == true then
+                Plr = nil
+                Locking = false
+            end
         end
-        RunService.RenderStepped:Wait()
-        LocalPlayer.Character.HumanoidRootPart.Velocity = OldVelocity
+    end
+    if getgenv().RevivalS.Checks.PlayerDeath  == true and Client.Character and Client.Character:FindFirstChild("Humanoid") and Client.Character.Humanoid.health < 1 then
+        if Locking == true then
+            Plr = nil
+            Locking = false
+        end
+    end
+    if getgenv().RevivalS.Safety.AntiGroundShots == true and Plr.Character.Humanoid.Jump == true and Plr.Character.Humanoid.FloorMaterial == Enum.Material.Air then
+        pcall(function()
+            local TargetVelv5 = Plr.Character.HumanoidRootPart
+    TargetVelv5.Velocity = Vector3.new(TargetVelv5.Velocity.X, math.abs(TargetVelv5.Velocity.Y * 0.36),
+     TargetVelv5.Velocity.Z)
+            TargetVelv5.AssemblyLinearVelocity = Vector3.new(TargetVelv5.Velocity.X, math.abs(TargetVelv5.Velocity.Y * 0.36), TargetVelv5.Velocity.Z)
+        end)
+    end
+end)
+
+if getgenv().RevivalS.Spin.Enabled == true then
+    
+    local Players = game:GetService("Players")
+    local UserInputService = game:GetService("UserInputService")
+    local RunService = game:GetService("RunService")
+    local Camera = workspace.CurrentCamera
+    local Toggle = getgenv().RevivalS.Spin.Enabled
+    local RotationSpeed = getgenv().RevivalS.Spin.SpinSpeed
+    local Keybind = getgenv().RevivalS.Spin.Keybind
+    
+    local function OnKeyPress(Input, GameProcessedEvent)
+        if Input.KeyCode == Keybind and not GameProcessedEvent then 
+            Toggle = not Toggle
+        end
     end
     
-end)
-
-
-local Old; Old = hookmetamethod(game, "__namecall", function(self, ...)
-    local args = { ... }
-    local method = getnamecallmethod()
-
-    if method == "FireServer" then
-        if args[1] == "UpdateMousePos" or args[1] == "MousePos" or args[1] == "Mouse" or args[1] == "MOUSE" then
-            if Revival.Aimlock.Enabled and Revival.Target then
-                if Revival.Aimlock.Resolver then
-                    args[2] = Revival.Target.Character[Revival.Aimlock.Part].Position
-                    return Old(self, unpack(args))
-                elseif Revival.Aimlock.Prediction then
-                    args[2] = Revival.Target.Character[Revival.Aimlock.Part].Position + (Revival.Target.Character[Revival.Aimlock.Part].Velocity * Revival.Aimlock.Pred)
-                    return Old(self, unpack(args))
-                elseif Revival.Aimlock.AirShot and Revival.Target.Character:FindFirstChild("Humanoid") and Revival.Target.Character.Humanoid.FloorMaterial == Enum.Material.Air then
-                    args[2] = Revival.Target.Character[Revival.Aimlock.AirPart].Position + (Revival.Target.Character[Revival.Aimlock.AirPart].Velocity * Revival.Aimlock.Pred)
-                    return Old(self, unpack(args))
-                else
-                    args[2] = Revival.Target.Character[Revival.Aimlock.Part].Position
-                    return Old(self, unpack(args))
-                end
-            end
-            if Revival.SilentAim.Enabled and Revival.SilentAim.Target then
-                if Revival.SilentAim.Prediction then
-                    args[2] = Revival.SilentAim.Target.Character[Revival.SilentAim.Part].Position + (Revival.SilentAim.Target.Character[Revival.SilentAim.Part].Velocity * Revival.SilentAim.Pred)
-                    return Old(self, unpack(args))
-                else
-                    args[2] = Revival.SilentAim.Target.Character[Revival.SilentAim.Part].Position
-                    return Old(self, unpack(args))
-                end
+    UserInputService.InputBegan:Connect(OnKeyPress)
+    
+    local LastRenderTime = 0
+    local TotalRotation = 0
+    
+    local function RotateCamera()
+        if Toggle then
+            local CurrentTime = tick()
+            local TimeDelta = math.min(CurrentTime - LastRenderTime, 0.01)
+            LastRenderTime = CurrentTime
+    
+            local RotationAngle = RotationSpeed * TimeDelta
+            local Rotation = CFrame.fromAxisAngle(Vector3.new(0, 1, 0), math.rad(RotationAngle))
+            Camera.CFrame = Camera.CFrame * Rotation
+    
+            TotalRotation = TotalRotation + RotationAngle
+            if TotalRotation >= getgenv().RevivalS.Spin.Degrees then 
+                Toggle = false
+                TotalRotation = 0
             end
         end
     end
-
-    return Old(self, ...)
-end)
-
-
-
-local AimTab = Revival:CreateTab({Name = "Aiming"})
-local AimingSection = AimTab:CreateSection({Name = "Target Aimlock", Side = "Left"})
-AimingSection:AddKeybind(
-    {
-        Name = "Keybind",
-        Keybind = "C",
-        Pressed = function()
-            if Revival.Target then
-                Revival.Target = nil
-                Notify("Revival | Target", "Targets cleared", 3)
-            else
-                Revival.Target = GetClosestPlayer()
-                if Revival.Target then
-                    Notify("Revival | Target", "Target acquired: " ..tostring(Revival.Target), 3)
-                else
-                    Notify("Revival | Target", "No valid targets found", 3)
-                end
-            end
-        end
-    }
-)
-AimingSection:AddToggle(
-    {
-        Name = "Aimlock - outdated",
-        Value = Revival.Aimlock.Enabled,
-        Keybind = Revival.Aimlock.Key,
-        Callback = function(v)
-            Revival.Aimlock.Enabled = v
-            Notify("Revival | Aimlock", "Aimlock : "..tostring(Revival.Aimlock.Enabled), 3)
-        end
-    }
-)
-AimingSection:AddToggle(
-    {
-        Name = "Air Shot",
-        Value = Revival.Aimlock.AirShot,
-        Callback = function(v)
-            Revival.Aimlock.AirShot = v
-            Notify("Revival | Aimlock", "Air Shot : "..tostring(Revival.Aimlock.AirShot), 3)
-        end
-    }
-)
-AimingSection:AddDropdown(
-    {
-        Name = "Aim Part",
-        Value = Revival.Aimlock.Part,
-        List = {"Head", "UpperTorso", "HumanoidRootPart", "LowerTorso"},
-        Callback = function(v)
-            Revival.Aimlock.Part = v
-            Notify("Revival | Aimlock", "Part : "..tostring(Revival.Aimlock.Part), 3)
-        end
-    }
-)
-AimingSection:AddDropdown(
-    {
-        Name = "Air Part",
-        Value = Revival.Aimlock.AirPart,
-        List = {"Head", "UpperTorso", "HumanoidRootPart", "LowerTorso"},
-        Callback = function(v)
-            Revival.Aimlock.AirPart = v
-            Notify("Revival | Aimlock", "Air Part : "..tostring(Revival.Aimlock.AirPart), 3)
-        end
-    }
-)
-AimingSection:AddToggle(
-    {
-        Name = "Look At",
-        Value = Revival.Aimlock.LookAt,
-        Callback = function(v)
-            Revival.LookAt = v
-            Notify("Revival | Aimlock", "Look At : "..tostring(Revival.LookAt), 3)
-        end
-    }
-)
-AimingSection:AddToggle(
-    {
-        Name = "Resolver",
-        Value = Revival.Aimlock.Resolver,
-        Callback = function(v)
-            Revival.Aimlock.Resolver = v
-            Notify("Revival | Aimlock", "Resolver : "..tostring(Revival.Aimlock.Resolver), 3)
-        end
-    }
-)
-AimingSection:AddToggle(
-    {
-        Name = "Prediction",
-        Value = Revival.Aimlock.Prediction,
-        Callback = function(v)
-            Revival.Aimlock.Prediction = v
-            Notify("Revival | Aimlock", "Prediction : "..tostring(Revival.Aimlock.Prediction), 3)
-        end
-    }
-)
-local AimlockPrediction = AimingSection:AddSlider(
-    {
-        Name = "Aimbot Prediction",
-        Value = Revival.Aimlock.Pred,
-        Min = 0,
-        Max = 1,
-        Decimals = 3,
-        Format = function(v)
-            return "Prediction: " .. tostring(v)
-        end,
-        Callback = function(v)
-            Revival.Aimlock.Pred = v
-            Notify("Revival | Aimlock", "Prediction: " .. tostring(Revival.Aimlock.Pred), 3)
-        end
-    }
-)
-AimingSection:AddToggle(
-    {
-        Name = "Auto Prediction",
-        Value = Revival.Aimlock.AutoPrediction,
-        Callback = function(v)
-            Revival.Aimlock.AutoPrediction = v
-            Notify("Revival | Aimlock", "Auto Prediction : "..tostring(Revival.Aimlock.AutoPrediction), 3)
-            repeat
-                if Revival.Aimlock.AutoPrediction then
-                    local ping = tonumber((game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValueString() or ""):split(" ")[1])
-                    if ping then
-                        if ping > 200 and ping < 300 then 
-                            Revival.Aimlock.Pred = 0.18742
-                        elseif ping > 180 and ping < 195 then 
-                            Revival.Aimlock.Pred = 0.16779123
-                        elseif ping > 140 and ping < 180 then 
-                            Revival.Aimlock.Pred = 0.16
-                        elseif ping > 110 and ping < 140 then 
-                            Revival.Aimlock.Pred = 0.15934
-                        elseif ping < 105 and ping > 90 then
-                            Revival.Aimlock.Pred = 0.138
-                        elseif ping < 90 and ping > 80 then
-                            Revival.Aimlock.Pred = 0.136
-                        elseif ping < 80 and ping > 70 then
-                            Revival.Aimlock.Pred = 0.134
-                        elseif ping < 70 and ping > 60 then
-                            Revival.Aimlock.Pred = 0.131
-                        elseif ping < 60 and ping > 50 then
-                            Revival.Aimlock.Pred = 0.1229
-                        elseif ping < 50 and ping > 40 then
-                            Revival.Aimlock.Pred = 0.1225
-                        elseif ping < 40 then
-                            Revival.Aimlock.Pred = 0.1256
-                        end
-                        AimlockPrediction:RawSet(Revival.Aimlock.Pred)
-                    end
-                end
-                wait()
-            until not Revival.Aimlock.AutoPrediction
-        end
-    }
-)
-AimingSection:AddToggle(
-    {
-        Name = "Knocked Check",
-        Value = Revival.Aimlock.KnockedCheck,
-        Callback = function(v)
-            Revival.Aimlock.KnockedCheck = v
-            Notify("Revival | Aimlock", "Knocked Check : "..tostring(Revival.Aimlock.KnockedCheck), 3)
-        end
-    }
-)
-AimingSection:AddToggle(
-    {
-        Name = "Grabbed Check",
-        Value = Revival.Aimlock.GrabbedCheck,
-        Callback = function(v)
-            Revival.Aimlock.GrabbedCheck = v
-            Notify("Revival | Aimlock", "Grabbed Check : "..tostring(Revival.Aimlock.GrabbedCheck), 3)
-        end
-    }
-)
-
-
-local CameraSection = AimTab:CreateSection({Name = "Camera Aimlock", Side = "Right"})
-CameraSection:AddToggle(
-    {
-        Name = "Camlock",
-        Value = Revival.Camlock.Enabled,
-        Keybind = Revival.Camlock.Key,
-        Callback = function(v)
-            Revival.Camlock.Enabled = v
-            Notify("Revival | Camlock", "Camlock : " .. tostring(Revival.Camlock.Enabled), 3)
-        end
-    }
-)
-
-CameraSection:AddToggle(
-    {
-        Name = "Air Shot",
-        Value = Revival.Camlock.AirShot,
-        Callback = function(v)
-            Revival.Camlock.AirShot = v
-            Notify("Revival | Camlock", "Air Shot : "..tostring(Revival.Camlock.AirShot), 3)
-        end
-    }
-)
-
-CameraSection:AddDropdown(
-    {
-        Name = "Aim Part",
-        Value = Revival.Camlock.Part,
-        List = {"Head", "UpperTorso", "HumanoidRootPart", "LowerTorso"},
-        Callback = function(v)
-            Revival.Camlock.Part = v
-            Notify("Revival | Camlock", "Part : "..tostring(Revival.Camlock.Part), 3)
-        end
-    }
-)
-CameraSection:AddDropdown(
-    {
-        Name = "Air Part",
-        Value = Revival.Camlock.AirPart,
-        List = {"Head", "UpperTorso", "HumanoidRootPart", "LowerTorso"},
-        Callback = function(v)
-            Revival.Camlock.AirPart = v
-            Notify("Revival | Camlock", "Air Part : "..tostring(Revival.Camlock.AirPart), 3)
-        end
-    }
-)
-CameraSection:AddToggle(
-    {
-        Name = "Resolver",
-        Value = Revival.Camlock.Resolver,
-        Callback = function(v)
-            Revival.Camlock.Resolver = v
-            Notify("Revival | Camlock", "Resolver : " .. tostring(Revival.Camlock.Resolver), 3)
-        end
-    }
-)
-CameraSection:AddToggle(
-    {
-        Name = "Smoothness",
-        Value = Revival.Camlock.Smoothness,
-        Callback = function(v)
-            Revival.Camlock.Smoothness = v
-            Notify("Revival | Camlock", "Smoothness : "..tostring(Revival.Camlock.Smoothness), 3)
-        end
-    }
-)
-CameraSection:AddSlider(
-    {
-        Name = "Smoothness Amount",
-        Value = Revival.Camlock.SmoothnessAmount,
-        Min = 0,
-        Max = 1,
-        Decimals = 2,
-        Format = function(v)
-            return "Smoothness: " .. tostring(v)
-        end,
-        Callback = function(v)
-            Revival.Camlock.SmoothnessAmount = v
-            Notify("Revival | Camlock", "Smoothness Amount: " .. tostring(Revival.Camlock.SmoothnessAmount), 3)
-        end
-    }
-)
-CameraSection:AddDropdown(
-    {
-        Name = "Easing Style",
-        Value = Revival.Camlock.EasingStyle,
-        List = {"Sine", "Back", "Quad", "Cubic", "Quart", "Quint", "Linear", "Bounce", "Elastic", "Circular", "Exponential",},
-        Callback = function(v)
-            Revival.Camlock.EasingStyle = v
-            Notify("Revival | Camlock", "Easing Style : "..tostring(Revival.Camlock.EasingStyle), 3)
-        end
-    }
-)
-CameraSection:AddDropdown(
-    {
-        Name = "Easing Direction",
-        Value = Revival.Camlock.EasingDirection,
-        List = {"In", "Out", "InOut", "OutIn"},
-        Callback = function(v)
-            Revival.Camlock.EasingDirection = v
-            Notify("Revival | Camlock", "Easing Style : "..tostring(Revival.Camlock.EasingDirection), 3)
-        end
-    }
-)
-
-CameraSection:AddToggle(
-    {
-        Name = "Prediction",
-        Value = Revival.Camlock.Prediction,
-        Callback = function(v)
-            Revival.Camlock.Prediction = v
-            Notify("Revival | Camlock", "Prediction : "..tostring(Revival.Camlock.Prediction), 3)
-        end
-    }
-)
-local CameraPrediction = CameraSection:AddSlider(
-    {
-        Name = "Camera Prediction",
-        Value = Revival.Camlock.Pred,
-        Min = 0,
-        Max = 1,
-        Decimals = 3,
-        Format = function(v)
-            return "Prediction: " .. tostring(v)
-        end,
-        Callback = function(v)
-            Revival.Camlock.Pred = v
-            Notify("Revival | Camlock", "Prediction : " .. tostring(Revival.Camlock.Prediction), 3)
-        end
-    }
-)
-CameraSection:AddToggle(
-    {
-        Name = "Auto Prediction",
-        Value = Revival.Camlock.AutoPrediction,
-        Callback = function(v)
-            Revival.Camlock.AutoPrediction = v
-            Notify("Revival | Camlock", "Auto Prediction : "..tostring(Revival.Camlock.AutoPrediction), 3)
-            repeat
-                if Revival.Camlock.AutoPrediction then
-                    local ping = tonumber((game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValueString() or ""):split(" ")[1])
-                    if ping then
-                        if ping > 200 and ping < 300 then 
-                            Revival.Camlock.Pred = 0.18742
-                        elseif ping > 180 and ping < 195 then 
-                            Revival.Camlock.Pred = 0.16779123
-                        elseif ping > 140 and ping < 180 then 
-                            Revival.Camlock.Pred = 0.16
-                        elseif ping > 110 and ping < 140 then 
-                            Revival.Camlock.Pred = 0.15934
-                        elseif ping < 105 and ping > 90 then
-                            Revival.Camlock.Pred = 0.138
-                        elseif ping < 90 and ping > 80 then
-                            Revival.Camlock.Pred = 0.136
-                        elseif ping < 80 and ping > 70 then
-                            Revival.Camlock.Pred = 0.134
-                        elseif ping < 70 and ping > 60 then
-                            Revival.Camlock.Pred = 0.131
-                        elseif ping < 60 and ping > 50 then
-                            Revival.Camlock.Pred = 0.1229
-                        elseif ping < 50 and ping > 40 then
-                            Revival.Camlock.Pred = 0.1225
-                        elseif ping < 40 then
-                            Revival.Camlock.Pred = 0.1256
-                        end
-                        CameraPrediction:RawSet(Revival.Camlock.Pred)
-                    end
-                end
-                wait()
-            until not Revival.Camlock.AutoPrediction
-        end
-    }
-)
-CameraSection:AddToggle(
-    {
-        Name = "Knocked Check",
-        Value = Revival.Camlock.KnockedCheck,
-        Callback = function(v)
-            Revival.Camlock.KnockedCheck = v
-            Notify("Revival | Camlock", "Knocked Check : "..tostring(Revival.Camlock.KnockedCheck), 3)
-        end
-    }
-)
-CameraSection:AddToggle(
-    {
-        Name = "Grabbed Check",
-        Value = Revival.Camlock.GrabbedCheck,
-        Callback = function(v)
-            Revival.Camlock.GrabbedCheck = v
-            Notify("Revival | Camlock", "Grabbed Check : "..tostring(Revival.Camlock.GrabbedCheck), 3)
-        end
-    }
-)
-
-local SilentSection = AimTab:CreateSection({Name = "Silent Aim", Side = "Left"})
-SilentSection:AddToggle(
-    {
-        Name = "Silent Aim - outdated",
-        Keybind = Revival.SilentAim.Key,
-        Value = Revival.SilentAim.Enabled,
-        Callback = function(v)
-            Revival.SilentAim.Enabled = v
-            Notify("Revival | Silent Aim", "Silent Aim : "..tostring(Revival.SilentAim.Enabled), 3)
-        end
-    }
-)
-SilentSection:AddToggle(
-    {
-        Name = "Air Shot",
-        Value = Revival.SilentAim.AirShot,
-        Callback = function(v)
-            Revival.SilentAim.AirShot = v
-            Notify("Revival | Silent Aim", "Air Shot : "..tostring(Revival.SilentAim.AirShot), 3)
-        end
-    }
-)
-SilentSection:AddDropdown(
-    {
-        Name = "Aim Part",
-        Value = Revival.SilentAim.Part,
-        List = {"Head", "UpperTorso", "HumanoidRootPart", "LowerTorso"},
-        Callback = function(v)
-            Revival.SilentAim.Part = v
-            Notify("Revival | Silent Aim", "Part : "..tostring(Revival.SilentAim.Part), 3)
-        end
-    }
-)
-SilentSection:AddDropdown(
-    {
-        Name = "Air Part",
-        Value = Revival.SilentAim.AirPart,
-        List = {"Head", "UpperTorso", "HumanoidRootPart", "LowerTorso"},
-        Callback = function(v)
-            Revival.SilentAim.AirPart = v
-            Notify("Revival | Silent Aim", "Air Part : "..tostring(Revival.SilentAim.AirPart), 3)
-        end
-    }
-)
-SilentSection:AddToggle(
-    {
-        Name = "Prediction",
-        Value = Revival.SilentAim.Prediction,
-        Callback = function(v)
-            Revival.SilentAim.Prediction = v
-            Notify("Revival | Silent Aim", "Prediction : "..tostring(Revival.SilentAim.Prediction), 3)
-        end
-    }
-)
-local SlientPrediction = SilentSection:AddSlider(
-    {
-        Name = "Aimbot Prediction",
-        Value = Revival.SilentAim.Pred,
-        Min = 0,
-        Max = 1,
-        Decimals = 3,
-        Format = function(v)
-            return "Prediction: " .. tostring(v)
-        end,
-        Callback = function(v)
-            Revival.SilentAim.Pred = v
-            Notify("Revival | Silent Aim", "Prediction : " .. tostring(Revival.SilentAim.Pred), 3)
-        end
-    }
-)
-SilentSection:AddToggle(
-    {
-        Name = "Auto Prediction",
-        Value = Revival.SilentAim.AutoPrediction,
-        Callback = function(v)
-            Revival.SilentAim.AutoPrediction = v
-            Notify("Revival | Silent Aim", "Auto Prediction : "..tostring(Revival.SilentAim.AutoPrediction), 3)
-            repeat
-                if Revival.SilentAim.AutoPrediction then
-                    local ping = tonumber((game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValueString() or ""):split(" ")[1])
-                    if ping then
-                        if ping > 200 and ping < 300 then 
-                            Revival.SilentAim.Pred = 0.18742
-                        elseif ping > 180 and ping < 195 then 
-                            Revival.SilentAim.Pred = 0.16779123
-                        elseif ping > 140 and ping < 180 then 
-                            Revival.SilentAim.Pred = 0.16
-                        elseif ping > 110 and ping < 140 then 
-                            Revival.SilentAim.Pred = 0.15934
-                        elseif ping < 105 and ping > 90 then
-                            Revival.SilentAim.Pred = 0.138
-                        elseif ping < 90 and ping > 80 then
-                            Revival.SilentAim.Pred = 0.136
-                        elseif ping < 80 and ping > 70 then
-                            Revival.SilentAim.Pred = 0.134
-                        elseif ping < 70 and ping > 60 then
-                            Revival.SilentAim.Pred = 0.131
-                        elseif ping < 60 and ping > 50 then
-                            Revival.SilentAim.Pred = 0.1229
-                        elseif ping < 50 and ping > 40 then
-                            Revival.SilentAim.Pred = 0.1225
-                        elseif ping < 40 then
-                            Revival.SilentAim.Pred = 0.1256
-                        end
-                        SlientPrediction:RawSet(Revival.SilentAim.Pred)
-                    end
-                end
-                wait()
-            until not Revival.SilentAim.AutoPrediction
-        end
-    }
-)
-SilentSection:AddToggle(
-    {
-        Name = "Knocked Check",
-        Value = Revival.Camlock.KnockedCheck,
-        Callback = function(v)
-            Revival.Camlock.KnockedCheck = v
-            Notify("Revival | Camlock", "Knocked Check : "..tostring(Revival.SilentAim.KnockedCheck), 3)
-        end
-    }
-)
-SilentSection:AddToggle(
-    {
-        Name = "Grabbed Check",
-        Value = Revival.SilentAim.GrabbedCheck,
-        Callback = function(v)
-            Revival.SilentAim.GrabbedCheck = v
-            Notify("Revival | Silent Aim", "Grabbed Check : "..tostring(Revival.SilentAim.GrabbedCheck), 3)
-        end
-    }
-)
-
-
-
-
-
-SilentSection:AddToggle(
-    {
-        Name = "Show FOV",
-        Value = SilentFOV.Visible,
-        Callback = function(v)
-            SilentFOV.Visible = v
-            Notify("Revival | Silent Aim", "FOV : "..tostring(SilentFOV.Visible), 3)
-        end
-    }
-)
-SilentSection:AddColorPicker(
-    {
-        Name = "FOV Color",
-        Value = Revival.SilentAim.Color,
-        Callback = function(v)
-            Revival.SilentAim.Color = v
-        end
-    }
-)
-SilentSection:AddToggle(
-    {
-        Name = "Filled",
-        Value = Revival.SilentAim.Filled,
-        Callback = function(v)
-            Revival.SilentAim.Filled = v
-            Notify("Revival | Silent Aim", "Filled : "..tostring(Revival.SilentAim.Filled), 3)
-        end
-    }
-)
-SilentSection:AddSlider(
-    {
-        Name = "FOV Size",
-        Value = Revival.SilentAim.Size,
-        Min = 25,
-        Max = 1000,
-        Format = function(v)
-            return "Size : " .. tostring(v)
-        end,
-        Callback = function(v)
-            Revival.SilentAim.Size = v
-            Notify("Revival | Silent Aim", "Size : " .. tostring(Revival.SilentAim.Size), 3)
-        end
-    }
-)
-SilentSection:AddSlider(
-    {
-        Name = "Transparency",
-        Value = Revival.SilentAim.Transparency,
-        Min = 0,
-        Max = 1,
-        Format = function(v)
-            return "Transparency : " .. tostring(v)
-        end,
-        Callback = function(v)
-            Revival.SilentAim.Transparency = v
-            Notify("Revival | Silent Aim", "Transparency : " .. tostring(Revival.SilentAim.Transparency), 3)
-        end
-    }
-)
-
-
-
-local CharTab = Revival:CreateTab({Name = "Character"})
-local CharSection = CharTab:CreateSection({Name = "Character", Side = "Left"})
-CharSection:AddToggle(
-    {
-        Name = "NoClip",
-        Value = Revival.NoClip.Enabled,
-        Keybind = Revival.NoClip.Key,
-        Callback = function(v)
-            Revival.NoClip.Enabled = v
-            if Revival.NoClip.Enabled then
-                repeat
-                    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                        for _, v in pairs(LocalPlayer.Character:GetDescendants()) do
-                            if v:IsA("BasePart") then
-                                v.CanCollide = false
-                            end
-                        end
-                    end
-                    RunService.Stepped:Wait()
-                until not Revival.NoClip.Enabled
-            else
-                if LocalPlayer.Character then
-                    for _, v in pairs(LocalPlayer.Character:GetDescendants()) do
-                        if v:IsA("BasePart") then
-                            v.CanCollide = true
-                        end
-                    end
-                end
-            end
-        end
-    }
-)
-CharSection:AddToggle(
-    {
-        Name = "Fly",
-        Value = Revival.Fly.Enabled,
-        Keybind = Revival.Fly.Key,
-        Callback = function()
-            Fly()
-        end
-    }
-)
-CharSection:AddSlider(
-    {
-        Name = "Fly Speed Multiplier",
-        Value = Revival.Fly.Speed,
-        Min = 0,
-        Max = 50,
-        Format = function(v)
-            return "Fly Speed : " .. tostring(v)
-        end,
-        Callback = function(v)
-            Revival.Fly.Speed = v
-            Notify("Revival | Fly", "Speed : " .. tostring(Revival.Fly.Speed), 3)
-        end
-    }
-)
---[[CharSection:AddToggle(
-    {
-        Name = "Korblox",
-        Value = Revival.Korblox.Enabled,
-        Callback = function(v)
-            Revival.Korblox.Enabled = v
-            if Revival.Korblox.Enabled then
-                LocalPlayer.Character.RightFoot.MeshId = "http://www.roblox.com/asset/?id=902942093"
-                LocalPlayer.Character.RightFoot.Transparency = 1
-                LocalPlayer.Character.RightLowerLeg.MeshId = "http://www.roblox.com/asset/?id=902942093"
-                LocalPlayer.Character.RightLowerLeg.Transparency = 1
-                LocalPlayer.Character.RightUpperLeg.MeshId = "http://www.roblox.com/asset/?id=902942096"
-                LocalPlayer.Character.RightUpperLeg.TextureID = "http://roblox.com/asset/?id=902843398"
-            end
-            Notify("Revival | Korblox", "Korblox : "..tostring(Revival.Korblox.Enabled), 3)
-        end
-    }
-)]]
-CharSection:AddTextbox({
-    Name = "Add Accessory",
-    Value = "",
-    Placeholder = "Enter Asset ID",
-    Callback = function()
+    
+    RunService.RenderStepped:Connect(RotateCamera)
     end
-})
-local CharSection = CharTab:CreateSection({Name = "Anti-Aim", Side = "Right"})
-CharSection:AddToggle(
-    {
-        Name = "Anti Aim",
-        Value = Revival.AntiAim.Enabled,
-        Keybind = Revival.AntiAim.Key,
-        Callback = function(v)
-            Revival.AntiAim.Enabled = v
-            Notify("Revival | Anti-Aim", "Anti Aim : "..tostring(Revival.AntiAim.Enabled), 3)
-        end
-    }
-)
-CharSection:AddToggle(
-    {
-        Name = "Desync",
-        Value = Revival.Desync.Enabled,
-        Keybind = Revival.Desync.Key,
-        Callback = function(v)
-            Revival.Desync.Enabled = v
-            Notify("Revival | Anti-Aim", "Desync : "..tostring(Revival.Desync.Enabled), 3)
-        end
-    }
-)
-CharSection:AddDropdown(
-    {
-        Name = "AA Type",
-        Value = Revival.AntiAim.Type,
-        List = {"Sky", "Underground", "Custom Vel"},
-        Callback = function(v)
-            Revival.AntiAim.Type = v
-            Notify("Revival | Anti-Aim", "Anti Aim Type : "..tostring(Revival.AntiAim.Type), 3)
-        end
-    }
-)
-CharSection:AddSlider(
-    {
-        Name = "X Velocity",
-        Value = Revival.AntiAim.XValue,
-        Min = -999,
-        Max = 999,
-        Format = function(v)
-            return "X Velocity: " .. tostring(v)
-        end,
-        Callback = function(v)
-            Revival.AntiAim.XValue = v
-            Notify("Revival | Anti-Aim", "X Velocity: " .. tostring(Revival.AntiAim.XValue), 3)
-        end
-    }
-)
-CharSection:AddSlider(
-    {
-        Name = "Y Velocity",
-        Value = Revival.AntiAim.YValue,
-        Min = -999,
-        Max = 999,
-        Format = function(v)
-            return "Y Velocity: " .. tostring(v)
-        end,
-        Callback = function(v)
-            Revival.AntiAim.YValue = v
-            Notify("Revival | Anti-Aim", "Y Velocity: " .. tostring(Revival.AntiAim.YValue), 3)
-        end
-    }
-)
-CharSection:AddSlider(
-    {
-        Name = "Z Velocity",
-        Value = Revival.AntiAim.ZValue,
-        Min = -999,
-        Max = 999,
-        Format = function(v)
-            return "Z Velocity: " .. tostring(v)
-        end,
-        Callback = function(v)
-            Revival.AntiAim.ZValue = v
-            Notify("Revival | Anti-Aim", "Z Velocity: " .. tostring(Revival.AntiAim.ZValue), 3)
-        end
-    }
-)
 
-
-local RageSection = CharTab:CreateSection({Name = "Rage", Side = "Left"})
-RageSection:AddKeybind(
-    {
-        Name = "Sprint Key",
-        Value = Enum.KeyCode[Revival.Speed.SprintKey],
-        Mode = "Held",
-        Pressed = function()
-            repeat
-                if Revival.Speed.Enabled then
-                    if InputService:IsKeyDown("W") or InputService:IsKeyDown("A") or InputService:IsKeyDown("S") or InputService:IsKeyDown("D") then
-                        LocalPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame + LocalPlayer.Character.Humanoid.MoveDirection * Revival.Speed.Speed
-                    end
-                end
-                game:GetService("RunService").Heartbeat:wait()
-            until not InputService:IsKeyDown(Revival.Speed.SprintKey)
-        end,
-    }
-)
-RageSection:AddToggle(
-    {
-        Name = "Speed",
-        Value = Revival.Speed.Enabled,
-        Keybind = "",
-        Callback = function(v)
-            Revival.Speed.Enabled = v
-            Notify("Revival | Speed", "Speed : " .. tostring(Revival.Speed.Enabled), 3)
-        end
-    }
-)
-RageSection:AddToggle(
-    {
-        Name = "Spin Bot",
-        Value = Revival.SpinBot.Enabled,
-        Callback = function(v)
-            Revival.SpinBot.Enabled = v
-            if Revival.SpinBot.Enabled then
-                repeat
-                    if LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                        LocalPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(Revival.SpinBot.Speed), 0)
-                    end
-                    RunService.RenderStepped:Wait()
-                until not Revival.SpinBot.Enabled
-            end
-            Notify("Revival | Spin bot", "Spin bot : " .. tostring(Revival.SpinBot.Enabled), 3)
-        end
-    }
-)
-RageSection:AddSlider(
-    {
-        Name = "Speed Multiplier",
-        Value = Revival.Speed.Speed,
-        Min = 0,
-        Max = 10,
-        Decimals = 1,
-        Format = function(v)
-            return "Speed : " .. tostring(v)
-        end,
-        Callback = function(v)
-            Revival.Speed.Speed = v
-            Notify("Revival | Speed", "Speed : " .. tostring(Revival.Speed.Speed), 3)
-        end
-    }
-)
-RageSection:AddSlider(
-    {
-        Name = "Spin Speed Multiplier",
-        Value = Revival.SpinBot.Speed,
-        Min = 0,
-        Max = 100,
-        Format = function(v)
-            return "Spin Speed : " .. tostring(v)
-        end,
-        Callback = function(v)
-            Revival.SpinBot.Speed = v
-            Notify("Revival | Spin Bot", "Speed : " .. tostring(Revival.SpinBot.Speed), 3)
-        end
-    }
-)
-RageSection:AddToggle(
-    {
-        Name = "Strafe",
-        Value = Revival.Strafe.Enabled,
-        Callback = function(v)
-            Revival.Strafe.Enabled = v
-            Notify("Revival | Strafe", "Strafe : " .. tostring(Revival.Strafe.Enabled), 3)
-        end
-    }
-)
-RageSection:AddToggle(
-    {
-        Name = "View Target",
-        Value = Revival.Strafe.View,
-        Callback = function(v)
-            Revival.Strafe.View = v
-            Notify("Revival | Strafe", "View Target : " .. tostring(Revival.Strafe.View), 3)
-        end
-    }
-)
-RageSection:AddDropdown(
-    {
-        Name = "Strafe Type",
-        Value = Revival.Strafe.Type,
-        List = {"Orbit", "Randomzied"},
-        Callback = function(v)
-            Revival.Strafe.Type = v
-            Notify("Revival | Strafe", "Type : "..tostring(Revival.Strafe.Type), 3)
-        end
-    }
-)
-RageSection:AddSlider(
-    {
-        Name = "Strafe Speed Multiplier",
-        Value = Revival.Strafe.Speed,
-        Min = 0,
-        Max = 10,
-        Decimals = 1,
-        Format = function(v)
-            return "Strafe Speed : " .. tostring(v)
-        end,
-        Callback = function(v)
-            Revival.Strafe.Speed = v
-            Notify("Revival | Strafe", "Speed : " .. tostring(Revival.Strafe.Speed), 3)
-        end
-    }
-)
-RageSection:AddSlider(
-    {
-        Name = "Strafe Distance Multiplier",
-        Value = Revival.Strafe.Distance,
-        Min = 0,
-        Max = 20,
-        Format = function(v)
-            return "Strafe Distance : " .. tostring(v)
-        end,
-        Callback = function(v)
-            Revival.Strafe.Distance = v
-            Notify("Revival | Strafe", "Distance : " .. tostring(Revival.Strafe.Distance), 3)
-        end
-    }
-)
-
-local TPTab = Revival:CreateTab({Name = "Teleports"})
-local TPSection = TPTab:CreateSection({Name = "Map Teleports", Side = "Left"})
-TPSection:AddButton(
-    {
-        Name = "UFO",
-        Callback = function()
-            LocalPlayer.Character.HumanoidRootPart.CFrame = Revival.Teleports.UFO
-        end
-    }
-)
-TPSection:AddButton(
-    {
-        Name = "Bank",
-        Callback = function()
-            LocalPlayer.Character.HumanoidRootPart.CFrame = Revival.Teleports.Bank
-        end
-    }
-)
-
-TPSection:AddButton(
-    {
-        Name = "Casino",
-        Callback = function()
-            LocalPlayer.Character.HumanoidRootPart.CFrame = Revival.Teleports.Casino
-        end
-    }
-)
-
-TPSection:AddButton(
-    {
-        Name = "School",
-        Callback = function()
-            LocalPlayer.Character.HumanoidRootPart.CFrame = Revival.Teleports.School
-        end
-    }
-)
-
-TPSection:AddButton(
-    {
-        Name = "Up Hill",
-        Callback = function()
-            LocalPlayer.Character.HumanoidRootPart.CFrame = Revival.Teleports.UpHill
-        end
-    }
-)
-
-
-TPSection:AddButton(
-    {
-        Name = "Down Hill",
-        Callback = function()
-            LocalPlayer.Character.HumanoidRootPart.CFrame = Revival.Teleports.DownHill
-        end
-    }
-)
-
-TPSection:AddButton(
-    {
-        Name = "Strip Club",
-        Callback = function()
-            LocalPlayer.Character.HumanoidRootPart.CFrame = Revival.Teleports.StripClub
-        end
-    }
-)
-
-TPSection:AddButton(
-    {
-        Name = "Shopping Plaza",
-        Callback = function()
-            LocalPlayer.Character.HumanoidRootPart.CFrame = Revival.Teleports.ShoppingPlaza
-        end
-    }
-)
-
-
-local ArmorSection = TPTab:CreateSection({Name = "Armor Teleports", Side = "Right"})
-ArmorSection:AddButton(
-    {
-        Name = "Medium Armor [ $1061 ]",
-        Callback = function()
-            if LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                if LocalPlayer.Character.BodyEffects.Armor.Value <= 100 and workspace.Ignored.Shop:FindFirstChild("[Medium Armor] - $1061") and not LocalPlayer.Character.BodyEffects["K.O"].Value then
-                    
-                    if not OldPos then
-                        OldPos = LocalPlayer.Character.HumanoidRootPart.CFrame
-                    end
-                    
-                    local equippedTool = LocalPlayer.Character:FindFirstChildOfClass("Tool")
-                    if equippedTool then
-                        equippedTool.Parent = LocalPlayer.Backpack
-                    end
-
-                    repeat
-                        if workspace.Ignored.Shop:FindFirstChild("[Medium Armor] - $1061") and workspace.Ignored.Shop["[Medium Armor] - $1061"]:FindFirstChild("ClickDetector") then
-                            LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.Ignored.Shop["[Medium Armor] - $1061"].Head.CFrame
-                            wait(Revival.AutoArmor.Delay)
-                            fireclickdetector(workspace.Ignored.Shop["[Medium Armor] - $1061"].ClickDetector)
-                        end
-                        RunService.RenderStepped:Wait()
-                    until LocalPlayer.Character.BodyEffects.Armor.Value >= 100 or LocalPlayer.Character.BodyEffects["K.O"].Value
-
-                    if OldPos then
-                        LocalPlayer.Character.HumanoidRootPart.CFrame = OldPos
-                        OldPos = nil
-                    end
-                    if equippedTool then
-                        equippedTool.Parent = LocalPlayer.Character
-                    end
-
-                end
-            end
-        end
-    }
-)
-ArmorSection:AddButton(
-    {
-        Name = "High-Medium Armor [ $2440 ]",
-        Callback = function()
-            if LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                if LocalPlayer.Character.BodyEffects.Armor.Value <= 130 and workspace.Ignored.Shop:FindFirstChild("[High-Medium Armor] - $2440") and not LocalPlayer.Character.BodyEffects["K.O"].Value then
-                    
-                    if not OldPos then
-                        OldPos = LocalPlayer.Character.HumanoidRootPart.CFrame
-                    end
-
-                    local equippedTool = LocalPlayer.Character:FindFirstChildOfClass("Tool")
-                    if equippedTool then
-                        equippedTool.Parent = LocalPlayer.Backpack
-                    end
-                    
-                    repeat
-                        if workspace.Ignored.Shop:FindFirstChild("[High-Medium Armor] - $2440") and workspace.Ignored.Shop["[High-Medium Armor] - $2440"]:FindFirstChild("ClickDetector") then
-                            LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.Ignored.Shop["[High-Medium Armor] - $2440"].Head.CFrame
-                            wait(Revival.AutoArmor.Delay)
-                            fireclickdetector(workspace.Ignored.Shop["[High-Medium Armor] - $2440"].ClickDetector)
-                        end
-                        RunService.RenderStepped:Wait()
-                    until LocalPlayer.Character.BodyEffects.Armor.Value >= 130 or LocalPlayer.Character.BodyEffects["K.O"].Value
-
-                    if OldPos then
-                        LocalPlayer.Character.HumanoidRootPart.CFrame = OldPos
-                        OldPos = nil
-                    end
-                    if equippedTool then
-                        equippedTool.Parent = LocalPlayer.Character
-                    end
-
-                end
-            end
-        end
-    }
-)
-ArmorSection:AddToggle(
-    {
-        Name = "Auto Armor",
-        Value = Revival.AutoArmor.Enabled,
-        Callback = function(v)
-            Revival.AutoArmor.Enabled = v
-            Notify("Revival | Auto Buy", "Auto Armor : " .. tostring(Revival.AutoArmor.Enabled), 3)
-        end
-    }
-)
-ArmorSection:AddToggle(
-    {
-        Name = "Teleport",
-        Value = Revival.AutoArmor.TP,
-        Callback = function(v)
-            Revival.AutoArmor.TP = v
-            Notify("Revival | Auto Buy", "Teleport: " .. tostring(Revival.AutoArmor.TP), 3)
-        end
-    }
-)
-ArmorSection:AddSlider(
-    {
-        Name = "Buy Delay",
-        Value = Revival.AutoArmor.Delay,
-        Min = 0,
-        Max = 1,
-        Decimals = 1,
-        Format = function(v)
-            return "Delay: " .. tostring(v)
-        end,
-        Callback = function(v)
-            Revival.AutoArmor.Delay = v
-            Notify("Revival | Auto Armor", "Delay: " .. tostring(Revival.AutoArmor.Delay), 3)
-        end
-    }
-)
-ArmorSection:AddSlider(
-    {
-        Name = "Buy Health",
-        Value = Revival.AutoArmor.BuyHP,
-        Min = 25,
-        Max = 100,
-        Format = function(v)
-            return "Buy Armor HP: " .. tostring(v)
-        end,
-        Callback = function(v)
-            Revival.AutoArmor.BuyHP = v
-            Notify("Revival | Auto Armor", "Buy Armor: " .. tostring(Revival.AutoArmor.BuyHP), 3)
-        end
-    }
-)
-ArmorSection:AddDropdown(
-    {
-        Name = "Armor To Buy",
-        Value = Revival.AutoArmor.ArmorToBuy,
-        List = {"[Medium Armor] - $1061", "[High-Medium Armor] - $2440"},
-        Callback = function(v)
-            Revival.AutoArmor.ArmorToBuy = v
-            Notify("Revival | Auto Buy", "Armor : "..tostring(Revival.AutoArmor.ArmorToBuy), 3)
-        end
-    }
-)
-
---[[local ArmorSection = TPTab:CreateSection({Name = "Food Teleports", Side = "Right"})
-ArmorSection:AddDropdown(
-    {
-        Name = "Food To Buy",
-        Value = Revival.AutoHeal.FoodToBuy,
-        List = {"[Chicken] - $7", "[Popcorn] - $7", "[Donut] - $5", "[HotDog] - $8", "[Pizza] - $5", "[Taco] - $2"},
-        Callback = function(v)
-            Revival.AutoHeal.FoodToBuy = v
-            Notify("Revival | Auto Buy", "Food : "..tostring(Revival.AutoHeal.FoodToBuy), 3)
-        end
-    }
-)]]
-
-local GotoSection = TPTab:CreateSection({Name = "Player Teleports", Side = "Left"})
-GotoSection:AddTextbox(
-    {
-        Name = "Go To",
-        Value = "",
-        Placeholder = "Enter Username/Display",
-        Callback = function(v)
-            local TeleportTarget = FindPlayer(v)
-            if TeleportTarget and TeleportTarget.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                if Revival.PTele.Type == "Tween" then
-                    TweenService:Create(LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(Revival.PTele.Speed, Enum.EasingStyle.Linear), {CFrame = TeleportTarget.Character.HumanoidRootPart.CFrame}):Play()
-                elseif Revival.PTele.Type == "CFrame" then
-                    LocalPlayer.Character.HumanoidRootPart.CFrame = TeleportTarget.Character.HumanoidRootPart.CFrame
-                end
-            end
-        end
-    }
-)
-GotoSection:AddDropdown(
-    {
-        Name = "Teleport Type",
-        Value = Revival.PTele.Type,
-        List = {"Tween", "CFrame"},
-        Callback = function(v)
-            Revival.PTele.Type = v
-            Notify("Revival | Teleport", "Teleport Type : "..tostring(Revival.PTele.Type), 3)
-        end
-    }
-)
-GotoSection:AddSlider(
-    {
-        Name = "Teleport Speed",
-        Value = Revival.PTele.Speed,
-        Min = 0,
-        Max = 5,
-        Format = function(v)
-            return "Speed: " .. tostring(v)
-        end,
-        Callback = function(v)
-            Revival.PTele.Speed = v
-            Notify("Revival | Teleport", "Speed: " .. tostring(Revival.PTele.Speed), 3)
-        end
-    }
-)
-
-
-
-local MiscTab = Revival:CreateTab({Name = "Misc"})
-local MiscSection = MiscTab:CreateSection({Name = "Misc", Side = "Left"})
-MiscSection:AddSlider(
-    {
-        Name = "Field Of View",
-        Value = workspace.CurrentCamera.FieldOfView,
-        Min = 70,
-        Max = 120,
-        Format = function(v)
-            return "Field Of View: " .. tostring(v)
-        end,
-        Callback = function(v)
-            workspace.CurrentCamera.FieldOfView = v
-            Notify("Revival | Field Of View", "Field Of View: " .. tostring(workspace.CurrentCamera.FieldOfView), 3)
-        end
-    }
-)
-MiscSection:AddToggle(
-    {
-        Name = "Show Chat",
-        Value = Revival.Visuals.Chat,
-        Callback = function(v)
-            Revival.Visuals.Chat = v
-            LocalPlayer.PlayerGui.Chat.Frame.ChatChannelParentFrame.Visible = Revival.Visuals.Chat
-            LocalPlayer.PlayerGui.Chat.Frame.ChatChannelParentFrame.Position = UDim2.new(0, 0, 0, 160)
-            Notify("Revival | Notification", "Chat: " .. tostring(Revival.Visuals.Chat), 3)
-        end
-    }
-)
-MiscSection:AddToggle(
-    {
-        Name = "Headless",
-        Value = Revival.Headless.Enabled,
-        Callback = function(v)
-            Revival.Headless.Enabled = v
-            Notify("Revival | Headless", "Headless : "..tostring(Revival.Headless.Enabled), 3)
-            if Revival.Headless.Enabled then
-                LocalPlayer.Character.Head.Transparency = 1
-                    for i, v in pairs(LocalPlayer.Character.Head:GetChildren()) do 
-                        if (v:IsA('Decal')) then
-                            v.Transparency = 1
-                        end
-                    end
-            else
-                LocalPlayer.Character.Head.Transparency = 0
-                for i, v in pairs(LocalPlayer.Character.Head:GetChildren()) do 
-                    if (v:IsA('Decal')) then
-                        v.Transparency = 0
-                    end
-                end
-            end
-        end
-    }
-)
-MiscSection:AddToggle(
-    {
-        Name = "No Recoil",
-        Value = Revival.NoRecoil.Enabled,
-        Callback = function(v)
-            Revival.NoRecoil.Enabled = v
-            Notify("Revival | No Recoil", "No Recoil: " .. tostring(Revival.NoRecoil.Enabled), 3)
-        end
-    }
-)
-MiscSection:AddToggle(
-    {
-        Name = "No JumpCooldown",
-        Value = Revival.NoJumpcooldown.Enabled,
-        Callback = function(v)
-            Revival.NoJumpcooldown.Enabled = v
-            Notify("Revival | No Jump Cooldown", "No Jump Cooldown: " .. tostring(Revival.NoJumpcooldown.Enabled), 3)
-        end
-    }
-)
-MiscSection:AddToggle(
-    {
-        Name = "Notifications",
-        Value = Revival.Notification.Enabled,
-        Callback = function(v)
-            Revival.Notification.Enabled = v
-            Notify("Revival | Notification", "Notifications: " .. tostring(Revival.Notification.Enabled), 3)
-        end
-    }
-)
+getgenv().Loaded = true -- end of the script
+else
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "RevivalS",
+        Text = "Updated Table",
+        Duration = 0.001
+    })
+end
